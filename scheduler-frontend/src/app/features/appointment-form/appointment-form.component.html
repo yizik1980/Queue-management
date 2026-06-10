@@ -1,0 +1,208 @@
+<!-- Backdrop -->
+<div
+  class="fixed inset-0 bg-ink/55 flex items-center justify-center z-[1000] p-4"
+  style="backdrop-filter:blur(2px)"
+  (click)="close.emit()"
+>
+  <!-- Modal box -->
+  <div
+    class="sketch-box w-full max-w-[520px] max-h-[90vh] overflow-y-auto rounded-lg !bg-cream"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- Header -->
+    <div class="flex items-center justify-between px-5 py-4 border-b-2 border-ink !bg-ink rounded-t-md">
+      <h2 class="font-sketch text-2xl text-amber m-0">
+        {{ editing() ? '✏️ עריכת תור' : '➕ תור חדש' }}
+      </h2>
+      <button
+        class="bg-transparent border-none text-white text-xl cursor-pointer px-2 py-1 rounded hover:bg-white/15"
+        (click)="close.emit()"
+      >✕</button>
+    </div>
+
+    <!-- Form body -->
+    <form (ngSubmit)="save()" class="flex flex-col gap-4 p-5" #f="ngForm">
+
+      <!-- Limit reached warning -->
+      @if (limitReached()) {
+        <div class="bg-crimson/15 border-2 border-crimson/50 rounded-md px-4 py-3 text-center">
+          <div class="text-2xl mb-1">🚫</div>
+          <p class="font-sketch text-lg text-crimson font-bold m-0">הגעת למגבלת 2 תורים פעילים</p>
+          <p class="text-sm text-crimson/80 mt-1 mb-0">בטל תור קיים כדי לקבוע תור חדש.</p>
+        </div>
+      }
+
+      <!-- Client field -->
+      <div>
+        <label class="form-label">👤 לקוח *</label>
+        @if (localClient()) {
+          <div class="flex items-center gap-2 px-3 py-2 border-2 border-ink rounded bg-white"
+               style="box-shadow:2px 2px 0 #1a1a2e">
+            <span class="w-3 h-3 rounded-full border border-ink shrink-0"
+                  [style.background]="localClient()!.color"></span>
+            <span class="font-semibold text-sm flex-1">{{ localClient()!.name }}</span>
+            <span class="text-xs text-gray-400">{{ localClient()!.phone }}</span>
+            <span class="text-xs bg-violet/15 text-violet px-2 py-0.5 rounded-full border border-violet/30">אתה</span>
+          </div>
+        } @else if (clients().length > 0) {
+          <select
+            class="form-input"
+            [(ngModel)]="form.clientId"
+            name="clientId"
+            (change)="onClientChange()"
+            required
+          >
+            <option value="">-- בחר לקוח --</option>
+            @for (c of clients(); track c._id) {
+              <option [value]="c._id">{{ c.name }} | {{ c.phone }}</option>
+            }
+          </select>
+        } @else {
+          <div class="bg-amber/25 border border-amber rounded px-3 py-2 text-sm">
+            אין לקוחות עדיין.
+          </div>
+        }
+      </div>
+
+      <!-- Date -->
+      <div>
+        <label class="form-label">📅 תאריך *</label>
+        <input
+          class="form-input"
+          type="date"
+          [(ngModel)]="form.date"
+          name="date"
+          [min]="today"
+          required
+          (change)="onDateChange()"
+        />
+        @if (hebrewDateLabel()) {
+          <span class="block text-xs font-semibold text-violet mt-1">{{ hebrewDateLabel() }}</span>
+        }
+      </div>
+
+      <!-- Time slot picker -->
+      @if (form.date) {
+        <div>
+          <label class="form-label">⏰ בחירת שעה *</label>
+
+          @if (!isWorkingDay()) {
+            <!-- Closed day -->
+            <div class="bg-amber/20 border border-amber/60 rounded-md px-4 py-3 text-center text-sm text-amber-800">
+              🚫 יום {{ closedDayName() }} — לא יום עבודה
+            </div>
+          } @else if (allSlots().length === 0) {
+            <!-- No future slots -->
+            <div class="bg-gray-100 border border-gray-300 rounded-md px-4 py-3 text-center text-sm text-slate">
+              😔 אין זמינות ביום זה
+            </div>
+          } @else {
+            <!-- Slot grid -->
+            <div class="grid grid-cols-4 gap-1.5">
+              @for (slot of allSlots(); track slot) {
+                @let booked = bookedSlots().has(slot);
+                @let selected = form.startTime === slot;
+                <button
+                  type="button"
+                  class="btn-sketch font-mono text-sm py-1.5 transition-colors"
+                  [class.!bg-mint]="selected && !booked"
+                  [class.!text-white]="selected && !booked"
+                  [class.!border-mint]="selected && !booked"
+                  [class.bg-gray-100]="booked"
+                  [class.text-gray-400]="booked"
+                  [class.line-through]="booked"
+                  [class.cursor-not-allowed]="booked"
+                  [disabled]="booked"
+                  (click)="selectSlot(slot)"
+                >{{ slot }}</button>
+              }
+            </div>
+            @if (form.startTime) {
+              <p class="text-xs text-violet mt-2 font-semibold">
+                ✅ נבחרה שעה: {{ form.startTime }}–{{ form.endTime }}
+              </p>
+            }
+          }
+        </div>
+      }
+
+      <!-- Service -->
+      <div>
+        <label class="form-label">✂️ שירות *</label>
+        <input
+          class="form-input"
+          type="text"
+          [(ngModel)]="form.service"
+          name="service"
+          placeholder="תספורת, צביעה, גוון..."
+          required
+        />
+      </div>
+
+      <!-- Status buttons — admin mode only -->
+      @if (!localClient()) {
+        <div>
+          <label class="form-label">📌 סטטוס</label>
+          <div class="flex flex-wrap gap-2">
+            @for (s of statuses; track s.value) {
+              <button
+                type="button"
+                class="btn-sketch text-base px-3 py-1.5"
+                [style.background-color]="form.status === s.value ? statusBtnColor(s.value) : '#fff'"
+                [style.color]="form.status === s.value && s.value === 'confirmed' ? '#fff' : '#1a1a2e'"
+                (click)="form.status = s.value"
+              >{{ s.label }}</button>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Color swatches -->
+      <div>
+        <label class="form-label">🎨 צבע</label>
+        <div class="flex flex-wrap gap-2">
+          @for (c of colors; track c) {
+            <div
+              class="w-7 h-7 rounded-full cursor-pointer border-2 border-transparent shadow-sketch-sm transition-transform hover:scale-110"
+              [style.background]="c"
+              [class.!border-ink]="form.color === c"
+              [class.scale-125]="form.color === c"
+              (click)="form.color = c"
+            ></div>
+          }
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div>
+        <label class="form-label">📝 הערות</label>
+        <textarea
+          class="form-input resize-y min-h-[64px]"
+          [(ngModel)]="form.notes"
+          name="notes"
+          rows="2"
+          placeholder="הערות נוספות..."
+        ></textarea>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex gap-2 justify-end pt-3 border-t-2 border-ink">
+        @if (editing()) {
+          <button
+            type="button"
+            class="btn-sketch bg-crimson/25 text-crimson px-4 py-2 me-auto"
+            (click)="delete()"
+            [disabled]="deleting()"
+          >{{ deleting() ? 'מוחק...' : '🗑 מחק' }}</button>
+        }
+        <button type="button" class="btn-sketch bg-cream px-4 py-2" (click)="close.emit()">ביטול</button>
+        <button
+          type="submit"
+          class="btn-sketch bg-mint text-white px-4 py-2"
+          [disabled]="saving() || !form.clientId || !form.date || !form.service || !form.startTime || limitReached()"
+        >{{ saving() ? 'שומר...' : (editing() ? '💾 עדכן' : '✅ שמור') }}</button>
+      </div>
+
+    </form>
+  </div>
+</div>

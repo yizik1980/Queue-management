@@ -1,0 +1,106 @@
+<div class="min-h-screen bg-cream font-body px-4 py-4">
+  <div class="max-w-[900px] mx-auto">
+
+    <!-- Header -->
+    <header class="sketch-box flex items-center justify-between px-5 py-4 mb-5 !bg-ink text-white">
+      <button class="btn-sketch bg-cream !text-ink px-4 py-2" (click)="back()">← חזרה ליומן</button>
+      <h1 class="font-sketch text-2xl text-amber m-0">👥 ניהול לקוחות</h1>
+      <button class="btn-sketch bg-mint text-white px-4 py-2" (click)="startAdd()">➕ לקוח חדש</button>
+    </header>
+
+    <!-- Add / Edit Form -->
+    @if (showAddForm()) {
+      <div class="sketch-box p-5 mb-5 bg-cream/60">
+        <h3 class="font-sketch text-xl text-ink mb-4 m-0">
+          {{ editingId() ? '✏️ עריכת לקוח' : '➕ לקוח חדש' }}
+        </h3>
+        <form (ngSubmit)="save()" class="flex flex-col gap-3">
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="form-label">שם *</label>
+              <input class="form-input" type="text" [(ngModel)]="form.name" name="name"
+                     placeholder="שם מלא" required/>
+            </div>
+            <div>
+              <label class="form-label">טלפון *</label>
+              <input class="form-input" type="tel" [(ngModel)]="form.phone" name="phone"
+                     placeholder="050-0000000" required/>
+            </div>
+          </div>
+
+          <div>
+            <label class="form-label">אימייל</label>
+            <input class="form-input" type="email" [(ngModel)]="form.email" name="email"
+                   placeholder="example@email.com"/>
+          </div>
+
+          <div>
+            <label class="form-label">צבע לקוח</label>
+            <div class="flex flex-wrap gap-2 mt-1">
+              @for (c of colors; track c) {
+                <div
+                  class="w-7 h-7 rounded-full cursor-pointer border-2 border-transparent shadow-sketch-sm transition-transform hover:scale-110"
+                  [style.background]="c"
+                  [class.!border-ink]="form.color === c"
+                  [class.scale-125]="form.color === c"
+                  (click)="form.color = c"
+                ></div>
+              }
+            </div>
+          </div>
+
+          <div>
+            <label class="form-label">הערות</label>
+            <textarea class="form-input resize-y min-h-[56px]" [(ngModel)]="form.notes" name="notes"
+                      rows="2" placeholder="הערות, העדפות..."></textarea>
+          </div>
+
+          <div class="flex gap-2 justify-end pt-3 border-t-2 border-ink">
+            <button type="button" class="btn-sketch bg-cream px-4 py-2"
+                    (click)="showAddForm.set(false)">ביטול</button>
+            <button type="submit" class="btn-sketch bg-mint text-white px-4 py-2"
+                    [disabled]="saving() || !form.name || !form.phone">
+              {{ saving() ? 'שומר...' : '✅ שמור' }}
+            </button>
+          </div>
+
+        </form>
+      </div>
+    }
+
+    <!-- Empty state -->
+    @if (clients().length === 0) {
+      <div class="sketch-box flex flex-col items-center gap-4 py-12 text-center">
+        <span class="text-6xl">👤</span>
+        <p class="font-sketch text-xl m-0 text-ink">אין לקוחות עדיין.</p>
+        <button class="btn-sketch bg-mint text-white px-6 py-2" (click)="startAdd()">הוסף לקוח ראשון</button>
+      </div>
+    } @else {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        @for (c of clients(); track c._id) {
+          <div
+            class="sketch-box flex items-start gap-3 p-4"
+            [style.border-right-width]="'5px'"
+            [style.border-right-color]="c.color"
+          >
+            <span class="w-3.5 h-3.5 rounded-full border-2 border-ink shrink-0 mt-0.5"
+                  [style.background]="c.color"></span>
+            <div class="flex-1 flex flex-col gap-1 min-w-0">
+              <strong class="text-base truncate">{{ c.name }}</strong>
+              <span class="text-sm text-gray-600">📞 {{ c.phone }}</span>
+              @if (c.email) { <span class="text-sm text-gray-600 truncate">✉️ {{ c.email }}</span> }
+              @if (c.notes) { <span class="text-xs text-gray-500 truncate">📝 {{ c.notes }}</span> }
+            </div>
+            <div class="flex gap-1.5 shrink-0">
+              <button class="btn-sketch bg-cream text-sm px-2.5 py-1" (click)="startEdit(c)">✏️</button>
+              <button class="btn-sketch bg-crimson/20 text-crimson text-sm px-2.5 py-1"
+                      (click)="delete(c._id!)">🗑</button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+  </div>
+</div>

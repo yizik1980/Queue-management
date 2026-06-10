@@ -1,0 +1,76 @@
+<!-- Full-screen backdrop (non-dismissible — must register) -->
+<div class="fixed inset-0 bg-ink/70 flex items-center justify-center z-[2000] p-4"
+     style="backdrop-filter:blur(4px)">
+
+  <div class="sketch-box w-full max-w-[420px] !bg-cream overflow-hidden">
+
+    <!-- Header -->
+    <div class="bg-ink px-6 py-4 text-center rounded-t-md">
+      <div class="text-5xl mb-2">✂️</div>
+      <h2 class="font-sketch text-2xl font-bold text-amber m-0">ברוך הבא!</h2>
+      <p class="text-white/70 text-sm mt-1 mb-0">הרשמה מהירה לקביעת תורים</p>
+    </div>
+
+    <!-- Form -->
+    <form (ngSubmit)="submit()" class="flex flex-col gap-4 p-6">
+
+      <div>
+        <label class="form-label">👤 שם מלא *</label>
+        <input
+          class="form-input"
+          type="text"
+          [(ngModel)]="form.name"
+          name="name"
+          placeholder="ישראל ישראלי"
+          required
+          autofocus
+        />
+      </div>
+
+      <div>
+        <label class="form-label">📞 טלפון *</label>
+        <input
+          class="form-input"
+          type="tel"
+          [(ngModel)]="form.phone"
+          name="phone"
+          placeholder="050-0000000"
+          required
+        />
+      </div>
+
+      <div>
+        <label class="form-label">✉️ אימייל <span class="text-gray-400 font-normal">(אופציונלי)</span></label>
+        <input
+          class="form-input"
+          type="email"
+          [(ngModel)]="form.email"
+          name="email"
+          placeholder="you@email.com"
+        />
+      </div>
+
+      <!-- Error -->
+      @if (error()) {
+        <div class="bg-crimson/15 border border-crimson/40 text-crimson text-sm rounded px-3 py-2">
+          ⚠️ {{ error() }}
+        </div>
+      }
+
+      <!-- Info note -->
+      <div class="text-xs text-gray-500 bg-amber/15 border border-amber/30 rounded px-3 py-2">
+        💡 הפרטים שלך נשמרים <strong>מקומית</strong> על המכשיר שלך בלבד.<br/>
+        תוכל לקבוע עד <strong>2 תורים</strong> פעילים.
+      </div>
+
+      <button
+        type="submit"
+        class="btn-sketch bg-mint text-white text-lg px-6 py-2.5 w-full"
+        [disabled]="saving() || !form.name.trim() || !form.phone.trim()"
+      >
+        {{ saving() ? '⏳ רושם...' : '✅ הרשמה וקביעת תור' }}
+      </button>
+
+    </form>
+  </div>
+</div>

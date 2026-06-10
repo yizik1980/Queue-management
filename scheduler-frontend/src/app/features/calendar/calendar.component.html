@@ -1,0 +1,120 @@
+<!-- Root: full viewport, no scroll -->
+<div class="h-screen overflow-hidden flex flex-col bg-cream font-body">
+
+  <!-- SVG sketch wobble filter -->
+  <svg width="0" height="0" class="absolute pointer-events-none">
+    <defs>
+      <filter id="sketch">
+        <feTurbulence type="turbulence" baseFrequency="0.03" numOctaves="2" result="noise" seed="5"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- ── Header (shrink-0) ──────────────────────────────────────────── -->
+  <header class="shrink-0 flex items-center justify-between px-4 py-2 bg-ink text-white border-b-2 border-ink">
+    <div class="flex items-center gap-2">
+      <span class="text-2xl leading-none">✂️</span>
+      <h1 class="font-sketch text-2xl font-bold text-amber m-0 leading-tight"
+          style="text-shadow:2px 2px 0 rgba(0,0,0,.4)">יומן תורים</h1>
+    </div>
+    <nav class="flex gap-2">
+      <button
+        class="btn-sketch bg-violet text-white px-3 py-1 text-base"
+        (click)="goToClients()"
+      >👥 לקוחות</button>
+      <button
+        class="btn-sketch bg-mint text-white px-3 py-1 text-base"
+        (click)="openNewAppointment()"
+      >➕ תור חדש</button>
+    </nav>
+  </header>
+
+  <!-- ── Month navigation (shrink-0) ──────────────────────────────── -->
+  <div class="shrink-0 flex items-center justify-between px-4 py-1.5 bg-white border-b-2 border-ink">
+    <button class="btn-sketch bg-amber px-3 py-1 text-xl font-bold min-w-[36px]" (click)="nextMonth()">→</button>
+    <div class="text-center">
+      <span class="block font-sketch text-xl font-bold text-ink leading-tight">{{ monthTitle() }}</span>
+      <span class="block text-[0.7rem] font-semibold text-violet leading-tight">{{ hebrewMonthTitle() }}</span>
+    </div>
+    <button class="btn-sketch bg-amber px-3 py-1 text-xl font-bold min-w-[36px]" (click)="prevMonth()">←</button>
+  </div>
+
+  <!-- ── Calendar main (flex-1, fills remaining space) ──────────────── -->
+  <div class="flex-1 min-h-0 flex flex-col px-2 pb-2 pt-1 gap-[3px]">
+
+    <!-- Weekday headers -->
+    <div class="shrink-0 grid grid-cols-7 gap-[3px]">
+      @for (day of weekDays; track day) {
+        <div class="text-center font-sketch text-xs font-bold py-1 bg-ink text-amber rounded-sm border border-ink">
+          {{ day }}
+        </div>
+      }
+    </div>
+
+    <!-- Days grid — fills all remaining height, rows equal via minmax(0,1fr) -->
+    <div
+      class="flex-1 min-h-0 grid grid-cols-7 gap-[3px]"
+      [style.grid-template-rows]="gridRows()"
+    >
+      @for (day of calendarDays(); track day.dateStr) {
+        <div
+          class="day-cell"
+          [class.other-month]="!day.isCurrentMonth"
+          [class.is-today]="day.isToday"
+          (click)="selectDay(day)"
+        >
+          <!-- Numbers row -->
+          <div class="flex justify-between items-start mb-0.5 shrink-0">
+            <span
+              class="font-sketch font-bold text-base leading-tight w-[22px] h-[22px] flex items-center justify-center rounded-full shrink-0"
+              [class.bg-accent]="day.isToday"
+              [class.text-white]="day.isToday"
+            >{{ day.gregorianLabel }}</span>
+            <span class="text-[0.58rem] font-semibold text-violet leading-tight text-end">
+              {{ day.hebrewLabel }}
+            </span>
+          </div>
+
+          <!-- Appointment chips — capped to avoid overflow -->
+          <div class="flex flex-col gap-[2px] flex-1 min-h-0 overflow-hidden">
+            @for (apt of day.appointments.slice(0, 2); track apt._id) {
+              <div
+                class="apt-chip"
+                [style.background-color]="apt.color + '33'"
+                [style.border-color]="apt.color"
+                (click)="editAppointment(apt, $event)"
+                [title]="apt.clientName + ' | ' + apt.service + ' ' + apt.startTime"
+              >
+                <span class="apt-time">{{ apt.startTime }}</span>
+                <span class="apt-name">{{ apt.service }}</span>
+              </div>
+            }
+            @if (day.appointments.length > 2) {
+              <div class="text-[0.6rem] text-violet text-center italic leading-tight">
+                +{{ day.appointments.length - 2 }}
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+  </div>
+
+  <!-- ── Modals (position:fixed — don't affect layout) ──────────────── -->
+  @if (loading()) {
+    <div class="fixed bottom-4 end-4 z-50 bg-amber border-2 border-ink rounded px-3 py-1.5 font-sketch text-sm shadow-sketch">
+      טוען...
+    </div>
+  }
+
+  @if (showForm()) {
+    <app-appointment-form (close)="closeForm()" />
+  }
+
+  @if (showRegistration()) {
+    <app-client-registration (registered)="onRegistered()" />
+  }
+
+</div>
