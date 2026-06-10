@@ -1,0 +1,32 @@
+// ── Clean / Professional theme ────────────────────────────────────────────────
+// Fonts
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600&display=swap');
+
+[data-theme="clean"] {
+  // ── Color tokens
+  --c-ink:     15 23 42;      // slate-900
+  --c-cream:   248 250 252;   // slate-50
+  --c-accent:  79 70 229;     // indigo-600
+  --c-violet:  124 58 237;    // violet-600
+  --c-mint:    5 150 105;     // emerald-600
+  --c-amber:   217 119 6;     // amber-600
+  --c-crimson: 220 38 38;     // red-600
+
+  // ── Font tokens
+  --font-display: 'Rubik';
+  --font-body:    'Rubik';
+
+  // ── Shadow tokens (soft, layered)
+  --shadow-card:       0 1px 3px rgb(0 0 0 / 0.08), 0 1px 2px rgb(0 0 0 / 0.05);
+  --shadow-card-hover: 0 4px 12px rgb(0 0 0 / 0.10), 0 2px 4px rgb(0 0 0 / 0.06);
+  --shadow-btn:        0 1px 2px rgb(0 0 0 / 0.06);
+  --shadow-focus:      0 0 0 3px rgb(var(--c-violet) / 0.25);
+
+  // ── Shape tokens
+  --border-w:    1px;
+  --radius-card: 0.75rem;    // rounded-xl
+
+  // ── No sketch decorations
+  --sketch-deco: 0;
+  --sketch-deco-offset: 0px;
+}
