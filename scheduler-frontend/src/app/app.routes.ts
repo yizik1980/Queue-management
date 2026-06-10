@@ -6,10 +6,5 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/calendar/calendar.component').then(m => m.CalendarComponent),
   },
-  {
-    path: 'clients',
-    loadComponent: () =>
-      import('./features/clients/clients.component').then(m => m.ClientsComponent),
-  },
   { path: '**', redirectTo: '' },
 ];

@@ -52,7 +52,7 @@ export class AppointmentFormComponent implements OnInit {
   /** Is the selected date a working day? */
   readonly isWorkingDay = computed(() => {
     const s = settingsSignal();
-    const date = this.form.date;
+    const date = this.formDate();
     if (!s || !date) return true;
     const dow = new Date(date + 'T12:00:00').getDay();
     return s.workingDays.includes(dow);
@@ -60,7 +60,7 @@ export class AppointmentFormComponent implements OnInit {
 
   /** Closed day label */
   readonly closedDayName = computed(() => {
-    const date = this.form.date;
+    const date = this.formDate();
     if (!date) return '';
     return DAY_NAMES[new Date(date + 'T12:00:00').getDay()];
   });
@@ -68,14 +68,14 @@ export class AppointmentFormComponent implements OnInit {
   /** All time slots for the selected date (past slots excluded when today) */
   readonly allSlots = computed(() => {
     const s = settingsSignal();
-    const date = this.form.date;
+    const date = this.formDate();
     if (!s || !date || !this.isWorkingDay()) return [];
     return generateTimeSlots(s, date);
   });
 
   /** Set of already-booked start times for the selected date (excludes current editing apt) */
   readonly bookedSlots = computed(() => {
-    const date = this.form.date;
+    const date = this.formDate();
     const editingId = selectedAppointmentSignal()?._id;
     if (!date) return new Set<string>();
     return new Set(
@@ -85,8 +85,10 @@ export class AppointmentFormComponent implements OnInit {
     );
   });
 
-  saving   = signal(false);
-  deleting = signal(false);
+  saving    = signal(false);
+  deleting  = signal(false);
+  /** Reactive mirror of form.date — drives all computed slots/day checks */
+  private formDate = signal('');
 
   form: Partial<Appointment> & { clientId: string } = {
     clientId: '', clientName: '', date: '',
@@ -104,7 +106,6 @@ export class AppointmentFormComponent implements OnInit {
     } else {
       const sel = selectedDateSignal();
       if (sel) {
-        // Only pre-fill if it's a valid future date (≥ today)
         this.form.date = sel >= this.today ? sel : this.today;
       }
       const lc = localClientSignal();
@@ -114,6 +115,7 @@ export class AppointmentFormComponent implements OnInit {
         this.form.color      = lc.color;
       }
     }
+    this.formDate.set(this.form.date ?? '');
     this.updateHebrewLabel();
   }
 
@@ -123,7 +125,7 @@ export class AppointmentFormComponent implements OnInit {
   }
 
   onDateChange(): void {
-    // Reset chosen slot when date changes
+    this.formDate.set(this.form.date ?? '');
     this.form.startTime = '';
     this.form.endTime   = '';
     this.updateHebrewLabel();

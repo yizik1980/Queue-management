@@ -5,7 +5,7 @@ export type SettingsDocument = HydratedDocument<Settings>;
 
 @Schema({ collection: 'settings', timestamps: true })
 export class Settings {
-  /** 0=Sun … 6=Sat  (default: Sun–Thu, Israeli work week) */
+  /** 0=Sun … 6=Sat  (default: Sun–Thu) */
   @Prop({ type: [Number], default: [0, 1, 2, 3, 4] })
   workingDays: number[];
 

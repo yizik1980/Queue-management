@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { AppointmentDay } from '../../core/models/appointment.model';
 import { HebrewDateService } from '../../core/services/hebrew-date.service';
 import { AppointmentsService } from '../../core/services/appointments.service';
@@ -34,7 +34,6 @@ export class CalendarComponent implements OnInit {
   private clientsSvc     = inject(ClientsService);
   private localClientSvc = inject(LocalClientService);
   private settingsSvc    = inject(SettingsService);
-  private router         = inject(Router);
 
   readonly loading       = loadingSignal;
   readonly showForm      = showFormSignal;
@@ -151,8 +150,7 @@ export class CalendarComponent implements OnInit {
     this.showRegistration.set(false);
   }
 
-  goToClients(): void { this.router.navigate(['/clients']); }
-  closeForm(): void  { showFormSignal.set(false); }
+  closeForm(): void { showFormSignal.set(false); }
 
   statusClass(status: string): string { return `status-badge status-${status}`; }
 }
