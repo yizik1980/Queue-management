@@ -1,12 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { ThemeService } from './core/services/theme.service';
 
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.scss',
 })
-export class AppComponent {
-  title = 'scheduler-frontend';
+export class AppComponent implements OnInit {
+  readonly title   = 'scheduler-frontend';
+  private themeSvc = inject(ThemeService);
+
+  ngOnInit(): void {
+    this.themeSvc.loadSaved();
+  }
 }

@@ -3,23 +3,25 @@ module.exports = {
   content: ['./src/**/*.{html,ts}'],
   theme: {
     extend: {
+      // Colors use CSS variables — supports opacity modifiers (bg-ink/50 etc.)
       colors: {
-        ink:     '#1a1a2e',
-        cream:   '#fef9e7',
-        accent:  '#e84393',
-        violet:  '#6c5ce7',
-        mint:    '#00b894',
-        amber:   '#fdcb6e',
-        crimson: '#d63031',
+        ink:     'rgb(var(--c-ink)     / <alpha-value>)',
+        cream:   'rgb(var(--c-cream)   / <alpha-value>)',
+        accent:  'rgb(var(--c-accent)  / <alpha-value>)',
+        violet:  'rgb(var(--c-violet)  / <alpha-value>)',
+        mint:    'rgb(var(--c-mint)    / <alpha-value>)',
+        amber:   'rgb(var(--c-amber)   / <alpha-value>)',
+        crimson: 'rgb(var(--c-crimson) / <alpha-value>)',
       },
       fontFamily: {
-        sketch: ['Caveat', 'cursive'],
-        body:   ['Heebo', 'sans-serif'],
+        // var(--font-display) / var(--font-body) set by each theme
+        sketch: ['var(--font-display)', 'cursive'],
+        body:   ['var(--font-body)',    'sans-serif'],
       },
       boxShadow: {
-        sketch:    '3px 3px 0 #1a1a2e',
-        'sketch-sm': '2px 2px 0 #1a1a2e',
-        'sketch-focus': '3px 3px 0 #6c5ce7',
+        sketch:        'var(--shadow-card)',
+        'sketch-sm':   'var(--shadow-btn)',
+        'sketch-focus':'var(--shadow-focus)',
       },
     },
   },

@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { ThemeService } from '../../core/services/theme.service';
 import { AppointmentDay } from '../../core/models/appointment.model';
 import { HebrewDateService } from '../../core/services/hebrew-date.service';
 import { AppointmentsService } from '../../core/services/appointments.service';
@@ -34,6 +35,7 @@ export class CalendarComponent implements OnInit {
   private clientsSvc     = inject(ClientsService);
   private localClientSvc = inject(LocalClientService);
   private settingsSvc    = inject(SettingsService);
+  readonly themeSvc      = inject(ThemeService);
 
   readonly loading       = loadingSignal;
   readonly showForm      = showFormSignal;

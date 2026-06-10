@@ -1,10 +1,36 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Heebo:wght@400;600&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-// ── Base ────────────────────────────────────────────────────────────────
+// ── Themes (define CSS custom properties per [data-theme]) ───────────────────
+@import './themes/sketch.theme';
+@import './themes/clean.theme';
+
+// ── Fallback: default to sketch tokens on :root so there's no flash ──────────
+:root {
+  --c-ink:     26 26 46;
+  --c-cream:   254 249 231;
+  --c-accent:  232 67 147;
+  --c-violet:  108 92 231;
+  --c-mint:    0 184 148;
+  --c-amber:   253 203 110;
+  --c-crimson: 214 48 49;
+
+  --font-display: 'Caveat';
+  --font-body:    'Heebo';
+
+  --shadow-card:       3px 3px 0 rgb(var(--c-ink));
+  --shadow-card-hover: 4px 4px 0 rgb(var(--c-ink));
+  --shadow-btn:        2px 2px 0 rgb(var(--c-ink));
+  --shadow-focus:      2px 2px 0 rgb(var(--c-violet));
+
+  --border-w:    2px;
+  --radius-card: 0.375rem;
+  --sketch-deco: 1;
+  --sketch-deco-offset: -3px;
+}
+
+// ── Base ─────────────────────────────────────────────────────────────────────
 @layer base {
   *, *::before, *::after { box-sizing: border-box; }
   html, body {
@@ -16,36 +42,49 @@
   ::-webkit-scrollbar-thumb { @apply bg-ink rounded; }
 }
 
-// ── Shared components ───────────────────────────────────────────────────
+// ── Shared components ─────────────────────────────────────────────────────────
+// All design-sensitive values come from CSS variables → themes swap automatically.
 @layer components {
 
   .sketch-box {
-    @apply border-2 border-ink rounded-md bg-white relative;
-    box-shadow: 3px 3px 0 #1a1a2e;
+    @apply bg-white relative;
+    border: var(--border-w) solid rgb(var(--c-ink));
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    // Decorative inner dashed border (sketch theme sets --sketch-deco: 1)
     &::before {
       content: '';
-      @apply absolute border border-dashed border-ink/20 rounded-[7px] pointer-events-none;
-      inset: -3px;
+      @apply absolute pointer-events-none;
+      opacity: var(--sketch-deco);
+      border: 1px dashed rgb(var(--c-ink) / 0.2);
+      border-radius: calc(var(--radius-card) + 2px);
+      inset: var(--sketch-deco-offset);
+      transition: opacity 0.25s;
     }
   }
 
   .btn-sketch {
-    @apply font-sketch text-lg border-2 border-ink rounded cursor-pointer transition-all select-none;
-    box-shadow: 2px 2px 0 #1a1a2e;
+    @apply text-lg cursor-pointer transition-all select-none;
+    font-family: var(--font-display), sans-serif;
+    border: var(--border-w) solid rgb(var(--c-ink));
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-btn);
     &:active {
-      @apply translate-x-[2px] translate-y-[2px];
+      transform: translate(2px, 2px);
       box-shadow: none;
     }
     &:disabled { @apply opacity-50 cursor-not-allowed; }
   }
 
   .form-input {
-    @apply w-full px-3 py-2 border-2 border-ink rounded bg-white text-ink outline-none font-body text-base;
-    box-shadow: 2px 2px 0 #1a1a2e;
+    @apply w-full px-3 py-2 bg-white text-ink outline-none font-body text-base;
+    border: var(--border-w) solid rgb(var(--c-ink));
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-btn);
     direction: rtl;
     &:focus {
-      @apply border-violet;
-      box-shadow: 2px 2px 0 #6c5ce7;
+      border-color: rgb(var(--c-violet));
+      box-shadow: var(--shadow-focus);
     }
   }
 
@@ -54,7 +93,9 @@
   }
 
   .apt-chip {
-    @apply flex gap-1 items-center px-1.5 py-0.5 rounded-sm text-xs cursor-pointer border overflow-hidden;
+    @apply flex gap-1 items-center px-1.5 py-0.5 text-xs cursor-pointer overflow-hidden;
+    border: 1px solid;
+    border-radius: calc(var(--radius-card) / 2);
     &:hover { @apply opacity-80; }
     .apt-time { @apply font-bold shrink-0; }
     .apt-name { @apply truncate; }
@@ -70,14 +111,22 @@
 
   .day-cell {
     @apply sketch-box flex flex-col overflow-hidden p-1 cursor-pointer;
-    min-height: 0;                     /* lets flex parent shrink the cell */
+    min-height: 0;
     transition: transform 0.1s, box-shadow 0.1s;
     &:hover:not(.other-month) {
-      @apply -translate-x-[1px] -translate-y-[1px];
-      box-shadow: 4px 4px 0 #1a1a2e;
+      transform: translate(-1px, -1px);
+      box-shadow: var(--shadow-card-hover);
     }
-    &.other-month  { @apply bg-gray-50 opacity-50 cursor-default; }
-    &.is-today     { @apply bg-amber/25 border-accent !border-[3px]; }
-    &.is-selected  { @apply bg-violet/10 border-violet !border-[3px]; }
+    &.other-month { @apply bg-gray-50 opacity-50 cursor-default; }
+    &.is-today {
+      @apply bg-amber/25;
+      border-color: rgb(var(--c-accent));
+      border-width: calc(var(--border-w) + 1px);
+    }
+    &.is-selected {
+      @apply bg-violet/10;
+      border-color: rgb(var(--c-violet));
+      border-width: calc(var(--border-w) + 1px);
+    }
   }
 }

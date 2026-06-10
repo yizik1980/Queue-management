@@ -11,69 +11,93 @@
     </defs>
   </svg>
 
-  <!-- ── Header (shrink-0) ──────────────────────────────────────────── -->
-  <header class="shrink-0 flex items-center justify-between px-4 py-2 bg-ink text-white border-b-2 border-ink">
-    <div class="flex items-center gap-2">
-      <span class="text-2xl leading-none">✂️</span>
-      <h1 class="font-sketch text-2xl font-bold text-amber m-0 leading-tight"
-          style="text-shadow:2px 2px 0 rgba(0,0,0,.4)">יומן תורים</h1>
-    </div>
-    <nav class="flex gap-2">
+  <!-- ── Header ─────────────────────────────────────────────────────────── -->
+  <header class="shrink-0 flex items-center justify-between px-3 sm:px-4 py-2 bg-ink text-white">
+
+    <h1 class="font-sketch text-xl sm:text-2xl font-bold text-amber m-0 leading-tight"
+        style="text-shadow:2px 2px 0 rgba(0,0,0,.4)">יומן תורים</h1>
+
+    <nav class="flex gap-1.5 sm:gap-2 items-center">
+
+      <!-- Theme toggle — label on desktop, icon on mobile -->
       <button
-        class="btn-sketch bg-mint text-white px-3 py-1 text-base"
+        class="btn-sketch bg-white/15 text-white px-2 py-1 text-xs sm:text-sm"
+        (click)="themeSvc.toggle()"
+        [title]="'עבור ל-' + (themeSvc.current() === 'sketch' ? 'תבנית נקייה' : 'תבנית קריקטורה')"
+      >
+        <span class="hidden sm:inline">{{ themeSvc.labels[themeSvc.current()] }}</span>
+        <span class="sm:hidden">🎨</span>
+      </button>
+
+      <!-- New appointment — text on desktop, icon on mobile -->
+      <button
+        class="btn-sketch bg-mint text-white px-2 sm:px-3 py-1 text-sm sm:text-base"
         (click)="openNewAppointment()"
-      >➕ תור חדש</button>
+      >
+        <span class="hidden sm:inline">➕ תור חדש</span>
+        <span class="sm:hidden">➕</span>
+      </button>
+
     </nav>
   </header>
 
-  <!-- ── Month navigation (shrink-0) ──────────────────────────────── -->
-  <div class="shrink-0 flex items-center justify-between px-4 py-1.5 bg-white border-b-2 border-ink">
-    <button class="btn-sketch bg-amber px-3 py-1 text-xl font-bold min-w-[36px]" (click)="nextMonth()">→</button>
+  <!-- ── Month navigation ───────────────────────────────────────────────── -->
+  <div class="shrink-0 flex items-center justify-between px-3 sm:px-4 py-1.5 bg-white border-b-2 border-ink">
+    <button class="btn-sketch bg-amber px-2 sm:px-3 py-1 text-lg sm:text-xl font-bold min-w-[32px] sm:min-w-[36px]"
+            (click)="nextMonth()">→</button>
     <div class="text-center">
-      <span class="block font-sketch text-xl font-bold text-ink leading-tight">{{ monthTitle() }}</span>
-      <span class="block text-[0.7rem] font-semibold text-violet leading-tight">{{ hebrewMonthTitle() }}</span>
+      <span class="block font-sketch text-lg sm:text-xl font-bold text-ink leading-tight">{{ monthTitle() }}</span>
+      <span class="block text-[0.65rem] sm:text-[0.7rem] font-semibold text-violet leading-tight">{{ hebrewMonthTitle() }}</span>
     </div>
-    <button class="btn-sketch bg-amber px-3 py-1 text-xl font-bold min-w-[36px]" (click)="prevMonth()">←</button>
+    <button class="btn-sketch bg-amber px-2 sm:px-3 py-1 text-lg sm:text-xl font-bold min-w-[32px] sm:min-w-[36px]"
+            (click)="prevMonth()">←</button>
   </div>
 
-  <!-- ── Calendar main (flex-1, fills remaining space) ──────────────── -->
-  <div class="flex-1 min-h-0 flex flex-col px-2 pb-2 pt-1 gap-[3px]">
+  <!-- ── Calendar grid ──────────────────────────────────────────────────── -->
+  <div class="flex-1 min-h-0 flex flex-col px-1 sm:px-2 pb-1 sm:pb-2 pt-1 gap-[2px] sm:gap-[3px]">
 
     <!-- Weekday headers -->
-    <div class="shrink-0 grid grid-cols-7 gap-[3px]">
+    <div class="shrink-0 grid grid-cols-7 gap-[2px] sm:gap-[3px]">
       @for (day of weekDays; track day) {
-        <div class="text-center font-sketch text-xs font-bold py-1 bg-ink text-amber rounded-sm border border-ink">
+        <div class="text-center font-sketch text-[0.6rem] sm:text-xs font-bold py-0.5 sm:py-1 bg-ink text-amber rounded-sm">
           {{ day }}
         </div>
       }
     </div>
 
-    <!-- Days grid — fills all remaining height, rows equal via minmax(0,1fr) -->
+    <!-- Days grid -->
     <div
-      class="flex-1 min-h-0 grid grid-cols-7 gap-[3px]"
+      class="flex-1 min-h-0 grid grid-cols-7 gap-[2px] sm:gap-[3px]"
       [style.grid-template-rows]="gridRows()"
     >
       @for (day of calendarDays(); track day.dateStr) {
         <div
-          class="day-cell"
+          class="day-cell !p-0.5 sm:!p-1"
           [class.other-month]="!day.isCurrentMonth"
           [class.is-today]="day.isToday"
           (click)="selectDay(day)"
         >
           <!-- Numbers row -->
-          <div class="flex justify-between items-start mb-0.5 shrink-0">
+          <div class="flex justify-between items-start shrink-0 mb-0.5">
+
+            <!-- Gregorian day -->
             <span
-              class="font-sketch font-bold text-base leading-tight w-[22px] h-[22px] flex items-center justify-center rounded-full shrink-0"
+              class="font-sketch font-bold text-sm sm:text-base leading-none
+                     w-[18px] h-[18px] sm:w-[22px] sm:h-[22px]
+                     flex items-center justify-center rounded-full shrink-0"
               [class.bg-accent]="day.isToday"
               [class.text-white]="day.isToday"
             >{{ day.gregorianLabel }}</span>
-            <span class="text-[0.58rem] font-semibold text-violet leading-tight text-end">
+
+            <!-- Hebrew label — hidden on mobile -->
+            <span class="hidden sm:block text-[0.55rem] font-semibold text-violet leading-tight text-end">
               {{ day.hebrewLabel }}
             </span>
+
           </div>
 
-          <!-- Appointment chips — capped to avoid overflow -->
-          <div class="flex flex-col gap-[2px] flex-1 min-h-0 overflow-hidden">
+          <!-- ── Desktop: text chips ──────────────────────────────────── -->
+          <div class="hidden sm:flex flex-col gap-[2px] flex-1 min-h-0 overflow-hidden">
             @for (apt of day.appointments.slice(0, 2); track apt._id) {
               <div
                 class="apt-chip"
@@ -92,13 +116,31 @@
               </div>
             }
           </div>
+
+          <!-- ── Mobile: colored dots ─────────────────────────────────── -->
+          <div class="flex sm:hidden flex-wrap gap-[3px] overflow-hidden mt-0.5">
+            @for (apt of day.appointments.slice(0, 6); track apt._id) {
+              <div
+                class="w-[7px] h-[7px] rounded-full shrink-0 border border-white/50"
+                [style.background]="apt.color"
+                (click)="editAppointment(apt, $event)"
+                [title]="apt.service + ' ' + apt.startTime"
+              ></div>
+            }
+            @if (day.appointments.length > 6) {
+              <span class="text-[0.45rem] text-violet self-center leading-none">
+                +{{ day.appointments.length - 6 }}
+              </span>
+            }
+          </div>
+
         </div>
       }
     </div>
 
   </div>
 
-  <!-- ── Modals (position:fixed — don't affect layout) ──────────────── -->
+  <!-- ── Modals ─────────────────────────────────────────────────────────── -->
   @if (loading()) {
     <div class="fixed bottom-4 end-4 z-50 bg-amber border-2 border-ink rounded px-3 py-1.5 font-sketch text-sm shadow-sketch">
       טוען...
