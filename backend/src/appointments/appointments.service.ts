@@ -1,11 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { Model } from 'mongoose';
 import { Appointment, AppointmentDocument } from './schemas/appointment.schema';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 
 @Injectable()
 export class AppointmentsService {
+  private readonly logger = new Logger(AppointmentsService.name);
+
   constructor(
     @InjectModel(Appointment.name) private model: Model<AppointmentDocument>,
   ) {}
@@ -32,5 +35,13 @@ export class AppointmentsService {
   async remove(id: string): Promise<void> {
     const doc = await this.model.findByIdAndDelete(id).exec();
     if (!doc) throw new NotFoundException(`Appointment ${id} not found`);
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async deletePastAppointments(): Promise<void> {
+    const today = new Date();
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    const { deletedCount } = await this.model.deleteMany({ date: { $lt: todayStr } }).exec();
+    this.logger.log(`Daily cleanup: deleted ${deletedCount} past appointments`);
   }
 }

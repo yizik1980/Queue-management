@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AppointmentsModule } from './appointments/appointments.module';
 import { ClientsModule } from './clients/clients.module';
 import { AuthModule } from './auth/auth.module';
@@ -10,6 +11,7 @@ import { SettingsModule } from './settings/settings.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ScheduleModule.forRoot(),
     MongooseModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) =>
