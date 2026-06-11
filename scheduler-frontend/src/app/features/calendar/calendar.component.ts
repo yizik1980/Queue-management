@@ -116,6 +116,7 @@ export class CalendarComponent implements OnInit {
       date, dateStr,
       appointments: byDate.get(dateStr) ?? [],
       isToday: dateStr === todayStr,
+      isPast: dateStr < todayStr,
       isCurrentMonth,
       gregorianLabel: String(date.getDate()),
       hebrewLabel: heb.dayLabel,
@@ -131,7 +132,7 @@ export class CalendarComponent implements OnInit {
   nextMonth(): void { navigateMonth(1); }
 
   selectDay(day: AppointmentDay): void {
-    if (!day.isCurrentMonth) return;
+    if (!day.isCurrentMonth || day.isPast) return;
     selectedDateSignal.set(day.dateStr);
     selectedAppointmentSignal.set(null);
     showFormSignal.set(true);

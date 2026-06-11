@@ -18,6 +18,7 @@ export interface AppointmentDay {
   dateStr: string; // YYYY-MM-DD
   appointments: Appointment[];
   isToday: boolean;
+  isPast: boolean;
   isCurrentMonth: boolean;
   gregorianLabel: string;
   hebrewLabel: string;

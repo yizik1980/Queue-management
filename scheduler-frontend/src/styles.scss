@@ -118,6 +118,11 @@
       box-shadow: var(--shadow-card-hover);
     }
     &.other-month { @apply bg-gray-50 opacity-50 cursor-default; }
+    &.is-past {
+      @apply opacity-40 cursor-default;
+      pointer-events: none;
+      .gregorian-day-num { text-decoration: line-through; }
+    }
     &.is-today {
       @apply bg-amber/25;
       border-color: rgb(var(--c-accent));

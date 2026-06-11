@@ -88,6 +88,7 @@
           class="day-cell !p-0.5 sm:!p-1"
           [class.other-month]="!day.isCurrentMonth"
           [class.is-today]="day.isToday"
+          [class.is-past]="day.isPast && day.isCurrentMonth"
           (click)="selectDay(day)"
         >
           <!-- Numbers row -->
@@ -95,7 +96,7 @@
 
             <!-- Gregorian day -->
             <span
-              class="font-sketch font-bold text-sm sm:text-base leading-none
+              class="gregorian-day-num font-sketch font-bold text-sm sm:text-base leading-none
                      w-[18px] h-[18px] sm:w-[22px] sm:h-[22px]
                      flex items-center justify-center rounded-full shrink-0"
               [class.bg-accent]="day.isToday"
