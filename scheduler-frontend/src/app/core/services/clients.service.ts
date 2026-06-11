@@ -12,12 +12,7 @@ const API = `${environment.apiUrl}/clients`;
 @Injectable({ providedIn: 'root' })
 export class ClientsService {
   private http = inject(HttpClient);
-
-  loadAll(): Observable<Client[]> {
-    return this.http.get<Client[]>(API).pipe(
-      tap(list => clientsSignal.set(list))
-    );
-  }
+ 
 
   create(dto: Omit<Client, '_id'>): Observable<Client> {
     return this.http.post<Client>(API, dto).pipe(

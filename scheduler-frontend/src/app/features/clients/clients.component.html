@@ -69,38 +69,6 @@
       </div>
     }
 
-    <!-- Empty state -->
-    @if (clients().length === 0) {
-      <div class="sketch-box flex flex-col items-center gap-4 py-12 text-center">
-        <span class="text-6xl">👤</span>
-        <p class="font-sketch text-xl m-0 text-ink">אין לקוחות עדיין.</p>
-        <button class="btn-sketch bg-mint text-white px-6 py-2" (click)="startAdd()">הוסף לקוח ראשון</button>
-      </div>
-    } @else {
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        @for (c of clients(); track c._id) {
-          <div
-            class="sketch-box flex items-start gap-3 p-4"
-            [style.border-right-width]="'5px'"
-            [style.border-right-color]="c.color"
-          >
-            <span class="w-3.5 h-3.5 rounded-full border-2 border-ink shrink-0 mt-0.5"
-                  [style.background]="c.color"></span>
-            <div class="flex-1 flex flex-col gap-1 min-w-0">
-              <strong class="text-base truncate">{{ c.name }}</strong>
-              <span class="text-sm text-gray-600">📞 {{ c.phone }}</span>
-              @if (c.email) { <span class="text-sm text-gray-600 truncate">✉️ {{ c.email }}</span> }
-              @if (c.notes) { <span class="text-xs text-gray-500 truncate">📝 {{ c.notes }}</span> }
-            </div>
-            <div class="flex gap-1.5 shrink-0">
-              <button class="btn-sketch bg-cream text-sm px-2.5 py-1" (click)="startEdit(c)">✏️</button>
-              <button class="btn-sketch bg-crimson/20 text-crimson text-sm px-2.5 py-1"
-                      (click)="delete(c._id!)">🗑</button>
-            </div>
-          </div>
-        }
-      </div>
-    }
 
   </div>
 </div>

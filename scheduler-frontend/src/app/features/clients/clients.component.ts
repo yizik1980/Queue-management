@@ -4,8 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { Client } from '../../core/models/client.model';
 import { ClientsService } from '../../core/services/clients.service';
-import { clientsSignal } from '../../core/store/app.store';
-
 const COLORS = [
   '#e84393', '#6c5ce7', '#00b894', '#fdcb6e',
   '#0984e3', '#e17055', '#a29bfe', '#55efc4',
@@ -18,11 +16,10 @@ const COLORS = [
   templateUrl: './clients.component.html',
   styleUrl: './clients.component.scss',
 })
-export class ClientsComponent implements OnInit {
+export class ClientsComponent {
   private svc = inject(ClientsService);
   private router = inject(Router);
 
-  readonly clients = clientsSignal;
   readonly colors = COLORS;
 
   saving = signal(false);
@@ -32,10 +29,6 @@ export class ClientsComponent implements OnInit {
   form: Partial<Client> = {
     name: '', phone: '', email: '', notes: '', color: COLORS[0],
   };
-
-  ngOnInit(): void {
-    this.svc.loadAll().subscribe();
-  }
 
   startAdd(): void {
     this.form = { name: '', phone: '', email: '', notes: '', color: COLORS[0] };
