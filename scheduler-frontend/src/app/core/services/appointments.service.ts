@@ -5,8 +5,9 @@ import { Appointment } from '../models/appointment.model';
 import {
   appointmentsSignal, addAppointment, updateAppointment, removeAppointment, loadingSignal
 } from '../store/app.store';
+import { environment } from '../../../environments/environment';
 
-const API = 'http://localhost:3000/api/appointments';
+const API = `${environment.apiUrl}/appointments`;
 
 @Injectable({ providedIn: 'root' })
 export class AppointmentsService {

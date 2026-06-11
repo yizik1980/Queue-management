@@ -2,7 +2,8 @@ import axios from 'axios';
 import { tokenSignal, setToken } from '../signals/store';
 import type { Appointment, Client, AdminStats, BusinessSettings } from '../types';
 
-const BASE = 'http://localhost:3000/api';
+const _apiRoot = import.meta.env.VITE_API_URL as string | undefined;
+const BASE = _apiRoot ? `${_apiRoot}/api` : 'http://localhost:3000/api';
 
 const http = axios.create({ baseURL: BASE });
 

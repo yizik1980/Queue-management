@@ -5,8 +5,9 @@ import { Client } from '../models/client.model';
 import {
   clientsSignal, addClient, updateClient, removeClient
 } from '../store/app.store';
+import { environment } from '../../../environments/environment';
 
-const API = 'http://localhost:3000/api/clients';
+const API = `${environment.apiUrl}/clients`;
 
 @Injectable({ providedIn: 'root' })
 export class ClientsService {

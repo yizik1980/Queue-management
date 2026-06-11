@@ -19,6 +19,19 @@
 
     <nav class="flex gap-1.5 sm:gap-2 items-center">
 
+      <!-- Logged-in client avatar -->
+      @if (localClient()) {
+        <div class="flex items-center gap-1.5 ps-1 pe-2 py-0.5 rounded-full bg-white/10 border border-white/20">
+          <div
+            class="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0 border border-white/40"
+            [style.background]="localClient()!.color"
+          >{{ localClient()!.name.charAt(0) }}</div>
+          <span class="hidden sm:block text-xs text-white/90 font-semibold max-w-[100px] truncate leading-none">
+            {{ localClient()!.name }}
+          </span>
+        </div>
+      }
+
       <!-- Theme toggle — label on desktop, icon on mobile -->
       <button
         class="btn-sketch bg-white/15 text-white px-2 py-1 text-xs sm:text-sm"
@@ -54,7 +67,7 @@
   </div>
 
   <!-- ── Calendar grid ──────────────────────────────────────────────────── -->
-  <div class="flex-1 min-h-0 flex flex-col px-1 sm:px-2 pb-1 sm:pb-2 pt-1 gap-[2px] sm:gap-[3px]">
+  <div class="md:flex-1 min-h-0 flex flex-col px-1 sm:px-2 pb-1 sm:pb-2 pt-1 gap-[2px] sm:gap-[3px]">
 
     <!-- Weekday headers -->
     <div class="shrink-0 grid grid-cols-7 gap-[2px] sm:gap-[3px]">

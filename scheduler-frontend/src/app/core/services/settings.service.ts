@@ -3,8 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs';
 import { BusinessSettings } from '../models/settings.model';
 import { settingsSignal } from '../store/app.store';
+import { environment } from '../../../environments/environment';
 
-const API = 'http://localhost:3000/api/settings';
+const API = `${environment.apiUrl}/settings`;
 
 @Injectable({ providedIn: 'root' })
 export class SettingsService {

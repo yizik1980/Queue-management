@@ -1,0 +1,67 @@
+services:
+  # ── 1. NestJS Backend ─────────────────────────────────────────────────────────
+  - type: web
+    name: scheduler-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm ci && npm run build
+    startCommand: node dist/main
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false          # set manually in Render dashboard (MongoDB Atlas connection string)
+      - key: JWT_SECRET
+        sync: false          # set manually in Render dashboard (long random string)
+      - key: CORS_FRONTEND_URL
+        fromService:
+          name: scheduler-frontend
+          type: web
+          property: onRenderCom
+      - key: CORS_ADMIN_URL
+        fromService:
+          name: scheduler-admin
+          type: web
+          property: onRenderCom
+
+  # ── 2. Angular Frontend ───────────────────────────────────────────────────────
+  - type: web
+    name: scheduler-frontend
+    env: static
+    rootDir: scheduler-frontend
+    buildCommand: >-
+      npm ci &&
+      printf 'export const environment = { production: true, apiUrl: "%s/api" };\n'
+      "$BACKEND_URL" > src/environments/environment.prod.ts &&
+      npm run build
+    staticPublishPath: dist/scheduler-frontend/browser
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: BACKEND_URL
+        fromService:
+          name: scheduler-backend
+          type: web
+          property: onRenderCom
+
+  # ── 3. React Admin CMS ────────────────────────────────────────────────────────
+  - type: web
+    name: scheduler-admin
+    env: static
+    rootDir: admin
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          name: scheduler-backend
+          type: web
+          property: onRenderCom
+        # admin/src/services/api.ts reads this and appends "/api"
+        # result: https://scheduler-backend.onrender.com/api
