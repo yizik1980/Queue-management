@@ -14,15 +14,9 @@ services:
       - key: JWT_SECRET
         sync: false          # set manually in Render dashboard (long random string)
       - key: CORS_FRONTEND_URL
-        fromService:
-          name: scheduler-frontend
-          type: web
-          property: onRenderCom
+        value: https://scheduler-frontend.onrender.com
       - key: CORS_ADMIN_URL
-        fromService:
-          name: scheduler-admin
-          type: web
-          property: onRenderCom
+        value: https://scheduler-admin.onrender.com
 
   # ── 2. Angular Frontend ───────────────────────────────────────────────────────
   - type: web
@@ -41,10 +35,7 @@ services:
         destination: /index.html
     envVars:
       - key: BACKEND_URL
-        fromService:
-          name: scheduler-backend
-          type: web
-          property: onRenderCom
+        value: https://scheduler-backend.onrender.com
 
   # ── 3. React Admin CMS ────────────────────────────────────────────────────────
   - type: web
@@ -59,9 +50,4 @@ services:
         destination: /index.html
     envVars:
       - key: VITE_API_URL
-        fromService:
-          name: scheduler-backend
-          type: web
-          property: onRenderCom
-        # admin/src/services/api.ts reads this and appends "/api"
-        # result: https://scheduler-backend.onrender.com/api
+        value: https://scheduler-backend.onrender.com
