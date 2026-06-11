@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 // ── Themes (define CSS custom properties per [data-theme]) ───────────────────
-@import './themes/sketch.theme';
-@import './themes/clean.theme';
+@use './themes/sketch.theme';
+@use './themes/clean.theme';
 
 // ── Fallback: default to sketch tokens on :root so there's no flash ──────────
 :root {
