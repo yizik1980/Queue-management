@@ -25,9 +25,6 @@
             ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "sassOptions": {
-              "silenceDeprecations": ["import"]
-            },
             "assets": [
               {
                 "glob": "**/*",
