@@ -33,3 +33,21 @@ export function generateTimeSlots(settings: BusinessSettings, dateStr: string): 
 
   return slots;
 }
+
+export function generateAllTimeSlots(settings: BusinessSettings): string[] {
+  const toMin = (t: string) => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
+  const toStr = (n: number) =>
+    `${String(Math.floor(n / 60)).padStart(2, '0')}:${String(n % 60).padStart(2, '0')}`;
+  const start = toMin(settings.startTime);
+  const end   = toMin(settings.endTime);
+  const bkS   = toMin(settings.breakStart);
+  const bkE   = toMin(settings.breakEnd);
+  const slots: string[] = [];
+  let cur = start;
+  while (cur + settings.slotDuration <= end) {
+    if (cur >= bkS && cur < bkE) { cur = bkE; continue; }
+    slots.push(toStr(cur));
+    cur += settings.slotDuration;
+  }
+  return slots;
+}

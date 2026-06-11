@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 // ── Themes (define CSS custom properties per [data-theme]) ───────────────────
-@use './themes/sketch.theme';
-@use './themes/clean.theme';
+@import './themes/sketch.theme';
+@import './themes/clean.theme';
 
 // ── Fallback: default to sketch tokens on :root so there's no flash ──────────
 :root {
@@ -107,6 +107,17 @@
     &.status-pending   { @apply bg-amber/30 text-amber/90 border-amber/50; }
     &.status-cancelled { @apply bg-crimson/20 text-crimson border-crimson/30; }
     &.status-completed { @apply bg-gray-100 text-gray-500 border-gray-300; }
+  }
+
+  .slot-row {
+    @apply cursor-default bg-white border-gray-100;
+    &.slot-free {
+      @apply cursor-pointer;
+      &:hover { @apply border-mint/40 bg-mint/5; }
+      &:active { @apply bg-mint/10; }
+    }
+    &.slot-past { @apply opacity-45 bg-gray-50 border-gray-100; }
+    &.slot-booked { @apply cursor-pointer; &:hover { @apply opacity-80; } }
   }
 
   .day-cell {

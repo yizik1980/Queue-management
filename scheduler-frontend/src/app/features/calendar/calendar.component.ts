@@ -2,7 +2,8 @@ import { Component, OnInit, inject, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ThemeService } from '../../core/services/theme.service';
-import { AppointmentDay } from '../../core/models/appointment.model';
+import { AppointmentDay, Appointment } from '../../core/models/appointment.model';
+import { generateAllTimeSlots } from '../../core/models/settings.model';
 import { HebrewDateService } from '../../core/services/hebrew-date.service';
 import { AppointmentsService } from '../../core/services/appointments.service';
 import { ClientsService } from '../../core/services/clients.service';
@@ -12,9 +13,16 @@ import {
   currentDateSignal, selectedDateSignal, appointmentsByDate,
   currentMonthAppointments, navigateMonth, showFormSignal,
   selectedAppointmentSignal, loadingSignal, localClientSignal,
+  settingsSignal, appointmentsSignal,
 } from '../../core/store/app.store';
 import { AppointmentFormComponent } from '../appointment-form/appointment-form.component';
 import { ClientRegistrationComponent } from '../client-registration/client-registration.component';
+
+interface TodaySlot {
+  time: string;
+  appointment: Appointment | null;
+  isPast: boolean;
+}
 
 const HEBREW_DAYS = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'שבת'];
 const GREGORIAN_MONTHS = [
@@ -45,6 +53,36 @@ export class CalendarComponent implements OnInit {
   readonly weekDays      = HEBREW_DAYS;
 
   showRegistration = signal(false);
+
+  readonly todayStr = computed(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  });
+
+  readonly todayGregorianLabel = computed(() => {
+    const now = new Date();
+    const days = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+    return `יום ${days[now.getDay()]}, ${now.getDate()} ב${GREGORIAN_MONTHS[now.getMonth()]}`;
+  });
+
+  readonly todayHebrewFull = computed(() =>
+    this.hebrewSvc.toHebrewDate(new Date()).fullLabel
+  );
+
+  readonly todaySlotList = computed<TodaySlot[]>(() => {
+    const s = settingsSignal();
+    if (!s) return [];
+    const now = new Date();
+    const nowMin = now.getHours() * 60 + now.getMinutes();
+    const aptMap = new Map<string, Appointment>();
+    for (const a of appointmentsSignal().filter(a => a.date === this.todayStr())) {
+      aptMap.set(a.startTime, a);
+    }
+    return generateAllTimeSlots(s).map(time => {
+      const [h, m] = time.split(':').map(Number);
+      return { time, appointment: aptMap.get(time) ?? null, isPast: h * 60 + m < nowMin };
+    });
+  });
 
   readonly gridRows = computed(() => {
     const n = Math.ceil(this.calendarDays().length / 7);
@@ -94,8 +132,6 @@ export class CalendarComponent implements OnInit {
 
   ngOnInit(): void {
     this.appointmentsSvc.loadAll().subscribe();
-    this.clientsSvc.loadAll().subscribe();
-    this.settingsSvc.load().subscribe();
     this.checkLocalClient();
   }
 
@@ -134,6 +170,12 @@ export class CalendarComponent implements OnInit {
   selectDay(day: AppointmentDay): void {
     if (!day.isCurrentMonth || day.isPast) return;
     selectedDateSignal.set(day.dateStr);
+    selectedAppointmentSignal.set(null);
+    showFormSignal.set(true);
+  }
+
+  selectSlotMobile(_time: string): void {
+    selectedDateSignal.set(this.todayStr());
     selectedAppointmentSignal.set(null);
     showFormSignal.set(true);
   }

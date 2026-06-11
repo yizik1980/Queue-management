@@ -54,25 +54,76 @@
     </nav>
   </header>
 
-  <!-- ── Month navigation ───────────────────────────────────────────────── -->
-  <div class="shrink-0 flex items-center justify-between px-3 sm:px-4 py-1.5 bg-white border-b-2 border-ink">
-    <button class="btn-sketch bg-amber px-2 sm:px-3 py-1 text-lg sm:text-xl font-bold min-w-[32px] sm:min-w-[36px]"
+  <!-- ── Month navigation — desktop only ──────────────────────────────── -->
+  <div class="shrink-0 hidden md:flex items-center justify-between px-4 py-1.5 bg-white border-b border-ink/20">
+    <button class="btn-sketch bg-amber px-3 py-1 text-xl font-bold min-w-[36px]"
             (click)="nextMonth()">→</button>
     <div class="text-center">
-      <span class="block font-sketch text-lg sm:text-xl font-bold text-ink leading-tight">{{ monthTitle() }}</span>
-      <span class="block text-[0.65rem] sm:text-[0.7rem] font-semibold text-violet leading-tight">{{ hebrewMonthTitle() }}</span>
+      <span class="block font-sketch text-xl font-bold text-ink leading-tight">{{ monthTitle() }}</span>
+      <span class="block text-[0.7rem] font-semibold text-violet leading-tight">{{ hebrewMonthTitle() }}</span>
     </div>
-    <button class="btn-sketch bg-amber px-2 sm:px-3 py-1 text-lg sm:text-xl font-bold min-w-[32px] sm:min-w-[36px]"
+    <button class="btn-sketch bg-amber px-3 py-1 text-xl font-bold min-w-[36px]"
             (click)="prevMonth()">←</button>
   </div>
 
-  <!-- ── Calendar grid ──────────────────────────────────────────────────── -->
-  <div class="md:flex-1 min-h-0 flex flex-col px-1 sm:px-2 pb-1 sm:pb-2 pt-1 gap-[2px] sm:gap-[3px]">
+  <!-- ── Mobile: Today's schedule ──────────────────────────────────────── -->
+  <div class="flex md:hidden flex-col flex-1 min-h-0">
+
+    <!-- Today header -->
+    <div class="shrink-0 px-4 pt-3 pb-2 border-b border-gray-100">
+      <p class="font-sketch font-bold text-base text-ink leading-tight">{{ todayGregorianLabel() }}</p>
+      <p class="text-xs text-violet/70 mt-0.5">{{ todayHebrewFull() }}</p>
+    </div>
+
+    <!-- Slots list -->
+    <div class="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-2">
+      @if (todaySlotList().length === 0) {
+        <p class="text-center text-gray-400 text-sm mt-10">אין שעות עבודה להיום</p>
+      }
+      @for (slot of todaySlotList(); track slot.time) {
+        <div
+          class="slot-row flex items-center gap-3 rounded-xl px-3 py-2.5 border transition-colors"
+          [class.slot-past]="slot.isPast && !slot.appointment"
+          [class.slot-free]="!slot.isPast && !slot.appointment"
+          [class.slot-booked]="!!slot.appointment"
+          [style.border-color]="slot.appointment ? slot.appointment.color : null"
+          [style.background]="slot.appointment ? slot.appointment.color + '18' : null"
+          (click)="slot.appointment ? editAppointment(slot.appointment, $event) : selectSlotMobile(slot.time)"
+        >
+          <span class="text-xs font-mono font-bold text-gray-400 shrink-0 w-10 text-right tabular-nums">{{ slot.time }}</span>
+          <div class="w-px h-4 bg-gray-200 shrink-0"></div>
+          @if (slot.appointment) {
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold text-ink truncate leading-tight">{{ slot.appointment.clientName }}</p>
+              <p class="text-xs text-gray-500 truncate leading-tight">{{ slot.appointment.service }}</p>
+            </div>
+            <div class="w-2 h-2 rounded-full shrink-0" [style.background]="slot.appointment.color"></div>
+          } @else if (!slot.isPast) {
+            <span class="text-xs text-gray-400 flex-1">פנוי</span>
+            <span class="text-gray-300 text-sm leading-none">＋</span>
+          } @else {
+            <span class="text-xs text-gray-300 flex-1">—</span>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Add button -->
+    <div class="shrink-0 px-4 pb-4 pt-2">
+      <button class="btn-sketch w-full bg-mint text-white py-2 text-sm" (click)="openNewAppointment()">
+        ➕ תור חדש
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ── Desktop: Calendar grid ─────────────────────────────────────────── -->
+  <div class="hidden md:flex flex-1 min-h-0 flex-col p-4 gap-[3px]">
 
     <!-- Weekday headers -->
-    <div class="shrink-0 grid grid-cols-7 gap-[2px] sm:gap-[3px]">
+    <div class="shrink-0 grid grid-cols-7 gap-[3px]">
       @for (day of weekDays; track day) {
-        <div class="text-center font-sketch text-[0.6rem] sm:text-xs font-bold py-0.5 sm:py-1 bg-ink text-amber rounded-sm">
+        <div class="text-center font-sketch text-xs font-bold py-1 bg-ink text-amber rounded-sm">
           {{ day }}
         </div>
       }
@@ -80,38 +131,30 @@
 
     <!-- Days grid -->
     <div
-      class="flex-1 min-h-0 grid grid-cols-7 gap-[2px] sm:gap-[3px]"
+      class="flex-1 min-h-0 grid grid-cols-7 gap-[3px]"
       [style.grid-template-rows]="gridRows()"
     >
       @for (day of calendarDays(); track day.dateStr) {
         <div
-          class="day-cell !p-0.5 sm:!p-1"
+          class="day-cell !p-1"
           [class.other-month]="!day.isCurrentMonth"
           [class.is-today]="day.isToday"
           [class.is-past]="day.isPast && day.isCurrentMonth"
           (click)="selectDay(day)"
         >
-          <!-- Numbers row -->
           <div class="flex justify-between items-start shrink-0 mb-0.5">
-
-            <!-- Gregorian day -->
             <span
-              class="gregorian-day-num font-sketch font-bold text-sm sm:text-base leading-none
-                     w-[18px] h-[18px] sm:w-[22px] sm:h-[22px]
-                     flex items-center justify-center rounded-full shrink-0"
+              class="gregorian-day-num font-sketch font-bold text-base leading-none
+                     w-[22px] h-[22px] flex items-center justify-center rounded-full shrink-0"
               [class.bg-accent]="day.isToday"
               [class.text-white]="day.isToday"
             >{{ day.gregorianLabel }}</span>
-
-            <!-- Hebrew label — hidden on mobile -->
-            <span class="hidden sm:block text-[0.55rem] font-semibold text-violet leading-tight text-end">
+            <span class="text-[0.55rem] font-semibold text-violet leading-tight text-end">
               {{ day.hebrewLabel }}
             </span>
-
           </div>
 
-          <!-- ── Desktop: text chips ──────────────────────────────────── -->
-          <div class="hidden sm:flex flex-col gap-[2px] flex-1 min-h-0 overflow-hidden">
+          <div class="flex flex-col gap-[2px] flex-1 min-h-0 overflow-hidden">
             @for (apt of day.appointments.slice(0, 2); track apt._id) {
               <div
                 class="apt-chip"
@@ -128,23 +171,6 @@
               <div class="text-[0.6rem] text-violet text-center italic leading-tight">
                 +{{ day.appointments.length - 2 }}
               </div>
-            }
-          </div>
-
-          <!-- ── Mobile: colored dots ─────────────────────────────────── -->
-          <div class="flex sm:hidden flex-wrap gap-[3px] overflow-hidden mt-0.5">
-            @for (apt of day.appointments.slice(0, 6); track apt._id) {
-              <div
-                class="w-[7px] h-[7px] rounded-full shrink-0 border border-white/50"
-                [style.background]="apt.color"
-                (click)="editAppointment(apt, $event)"
-                [title]="apt.service + ' ' + apt.startTime"
-              ></div>
-            }
-            @if (day.appointments.length > 6) {
-              <span class="text-[0.45rem] text-violet self-center leading-none">
-                +{{ day.appointments.length - 6 }}
-              </span>
             }
           </div>
 
