@@ -6,7 +6,6 @@ import { AppointmentDay, Appointment } from '../../core/models/appointment.model
 import { generateAllTimeSlots } from '../../core/models/settings.model';
 import { HebrewDateService } from '../../core/services/hebrew-date.service';
 import { AppointmentsService } from '../../core/services/appointments.service';
-import { ClientsService } from '../../core/services/clients.service';
 import { LocalClientService } from '../../core/services/local-client.service';
 import { SettingsService } from '../../core/services/settings.service';
 import {
@@ -40,8 +39,7 @@ const GREGORIAN_MONTHS = [
 export class CalendarComponent implements OnInit {
   private hebrewSvc      = inject(HebrewDateService);
   private appointmentsSvc = inject(AppointmentsService);
-  private clientsSvc     = inject(ClientsService);
-  private localClientSvc = inject(LocalClientService);
+private localClientSvc = inject(LocalClientService);
   private settingsSvc    = inject(SettingsService);
   readonly themeSvc      = inject(ThemeService);
 
@@ -132,6 +130,7 @@ export class CalendarComponent implements OnInit {
 
   ngOnInit(): void {
     this.appointmentsSvc.loadAll().subscribe();
+    this.settingsSvc.load().subscribe();
     this.checkLocalClient();
   }
 
