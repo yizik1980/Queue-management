@@ -16,12 +16,20 @@ export class AuthService implements OnApplicationBootstrap {
   ) {}
 
   async onApplicationBootstrap(): Promise<void> {
+    await this.ensureDefaultAdmin();
+  }
+
+  async ensureDefaultAdmin(): Promise<void> {
     const count = await this.adminModel.countDocuments();
     if (count === 0) {
       const passwordHash = await bcrypt.hash('admin123', 10);
       await this.adminModel.create({ username: 'admin', passwordHash });
       this.logger.warn('Default admin created → username: admin  password: admin123 — change this in production!');
     }
+  }
+
+  findByUsername(username: string): Promise<AdminDocument | null> {
+    return this.adminModel.findOne({ username }).exec();
   }
 
   async validateAdmin(username: string, password: string): Promise<AdminDocument | null> {

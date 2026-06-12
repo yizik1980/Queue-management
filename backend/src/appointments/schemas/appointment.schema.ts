@@ -5,6 +5,7 @@ export type AppointmentDocument = Appointment & Document;
 
 @Schema({ timestamps: true, collection: 'appointments' })
 export class Appointment {
+  @Prop({ required: true, index: true }) adminId: string;
   @Prop({ required: true }) clientId: string;
   @Prop({ required: true }) clientName: string;
   @Prop({ required: true }) date: string;   // YYYY-MM-DD

@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Patch, Delete, Body, Param, UseGuards, Query,
+  Controller, Get, Patch, Delete, Body, Param, UseGuards, Query, Req,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AppointmentsService } from '../appointments/appointments.service';
@@ -18,56 +18,60 @@ export class AdminPanelController {
   // ── Appointments ──────────────────────────────────────────────────────
 
   @Get('appointments')
-  getAllAppointments(@Query('date') date?: string) {
-    return date ? this.appointmentsSvc.findByDate(date) : this.appointmentsSvc.findAll();
+  getAllAppointments(@Req() req: any, @Query('date') date?: string) {
+    const adminId: string = req.user.sub;
+    return date
+      ? this.appointmentsSvc.findByDate(date, adminId)
+      : this.appointmentsSvc.findAll(adminId);
   }
 
   @Patch('appointments/:id')
-  updateAppointment(@Param('id') id: string, @Body() body: any) {
-    return this.appointmentsSvc.update(id, body);
+  updateAppointment(@Req() req: any, @Param('id') id: string, @Body() body: any) {
+    return this.appointmentsSvc.update(id, body, req.user.sub);
   }
 
   @Delete('appointments/:id')
-  deleteAppointment(@Param('id') id: string) {
-    return this.appointmentsSvc.remove(id);
+  deleteAppointment(@Req() req: any, @Param('id') id: string) {
+    return this.appointmentsSvc.remove(id, req.user.sub);
   }
 
   // ── Clients ───────────────────────────────────────────────────────────
 
   @Get('clients')
-  getAllClients() {
-    return this.clientsSvc.findAll();
+  getAllClients(@Req() req: any) {
+    return this.clientsSvc.findAll(req.user.sub);
   }
 
   @Patch('clients/:id')
-  updateClient(@Param('id') id: string, @Body() body: any) {
-    return this.clientsSvc.update(id, body);
+  updateClient(@Req() req: any, @Param('id') id: string, @Body() body: any) {
+    return this.clientsSvc.update(id, body, req.user.sub);
   }
 
   @Delete('clients/:id')
-  deleteClient(@Param('id') id: string) {
-    return this.clientsSvc.remove(id);
+  deleteClient(@Req() req: any, @Param('id') id: string) {
+    return this.clientsSvc.remove(id, req.user.sub);
   }
 
   // ── Settings ──────────────────────────────────────────────────────────
 
   @Get('settings')
-  getSettings() {
-    return this.settingsSvc.getOrCreate();
+  getSettings(@Req() req: any) {
+    return this.settingsSvc.getOrCreate(req.user.sub);
   }
 
   @Patch('settings')
-  updateSettings(@Body() body: any) {
-    return this.settingsSvc.update(body);
+  updateSettings(@Req() req: any, @Body() body: any) {
+    return this.settingsSvc.update(req.user.sub, body);
   }
 
   // ── Stats ─────────────────────────────────────────────────────────────
 
   @Get('stats')
-  async getStats() {
+  async getStats(@Req() req: any) {
+    const adminId: string = req.user.sub;
     const [appointments, clients] = await Promise.all([
-      this.appointmentsSvc.findAll(),
-      this.clientsSvc.findAll(),
+      this.appointmentsSvc.findAll(adminId),
+      this.clientsSvc.findAll(adminId),
     ]);
 
     const byStatus = (s: string) => appointments.filter((a: any) => a.status === s).length;

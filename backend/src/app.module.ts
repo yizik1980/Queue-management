@@ -7,6 +7,7 @@ import { ClientsModule } from './clients/clients.module';
 import { AuthModule } from './auth/auth.module';
 import { AdminPanelModule } from './admin-panel/admin-panel.module';
 import { SettingsModule } from './settings/settings.module';
+import { MigrationService } from './migration.service';
 
 @Module({
   imports: [
@@ -23,5 +24,6 @@ import { SettingsModule } from './settings/settings.module';
     SettingsModule,
     AdminPanelModule,
   ],
+  providers: [MigrationService],
 })
 export class AppModule {}

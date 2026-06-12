@@ -1,4 +1,5 @@
 export class CreateClientDto {
+  adminId: string;
   name: string;
   phone: string;
   email?: string;

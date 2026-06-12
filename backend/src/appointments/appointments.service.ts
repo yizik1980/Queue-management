@@ -13,12 +13,12 @@ export class AppointmentsService {
     @InjectModel(Appointment.name) private model: Model<AppointmentDocument>,
   ) {}
 
-  findAll(): Promise<AppointmentDocument[]> {
-    return this.model.find().sort({ date: 1, startTime: 1 }).lean().exec() as any;
+  findAll(adminId: string): Promise<AppointmentDocument[]> {
+    return this.model.find({ adminId }).sort({ date: 1, startTime: 1 }).lean().exec() as any;
   }
 
-  findByDate(date: string): Promise<AppointmentDocument[]> {
-    return this.model.find({ date }).sort({ startTime: 1 }).lean().exec() as any;
+  findByDate(date: string, adminId: string): Promise<AppointmentDocument[]> {
+    return this.model.find({ date, adminId }).sort({ startTime: 1 }).lean().exec() as any;
   }
 
   async create(dto: CreateAppointmentDto): Promise<AppointmentDocument> {
@@ -26,14 +26,14 @@ export class AppointmentsService {
     return created.save();
   }
 
-  async update(id: string, dto: Partial<CreateAppointmentDto>): Promise<AppointmentDocument> {
-    const doc = await this.model.findByIdAndUpdate(id, dto, { new: true }).exec();
+  async update(id: string, dto: Partial<CreateAppointmentDto>, adminId: string): Promise<AppointmentDocument> {
+    const doc = await this.model.findOneAndUpdate({ _id: id, adminId }, dto, { new: true }).exec();
     if (!doc) throw new NotFoundException(`Appointment ${id} not found`);
     return doc;
   }
 
-  async remove(id: string): Promise<void> {
-    const doc = await this.model.findByIdAndDelete(id).exec();
+  async remove(id: string, adminId: string): Promise<void> {
+    const doc = await this.model.findOneAndDelete({ _id: id, adminId }).exec();
     if (!doc) throw new NotFoundException(`Appointment ${id} not found`);
   }
 

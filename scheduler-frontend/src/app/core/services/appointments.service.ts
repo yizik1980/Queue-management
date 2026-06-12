@@ -8,6 +8,7 @@ import {
 import { environment } from '../../../environments/environment';
 
 const API = `${environment.apiUrl}/appointments`;
+const A = `admin=${environment.adminUsername}`;
 
 @Injectable({ providedIn: 'root' })
 export class AppointmentsService {
@@ -15,25 +16,25 @@ export class AppointmentsService {
 
   loadAll(): Observable<Appointment[]> {
     loadingSignal.set(true);
-    return this.http.get<Appointment[]>(API).pipe(
+    return this.http.get<Appointment[]>(`${API}?${A}`).pipe(
       tap(list => { appointmentsSignal.set(list); loadingSignal.set(false); })
     );
   }
 
   create(dto: Omit<Appointment, '_id'>): Observable<Appointment> {
-    return this.http.post<Appointment>(API, dto).pipe(
+    return this.http.post<Appointment>(`${API}?${A}`, dto).pipe(
       tap(a => addAppointment(a))
     );
   }
 
   update(id: string, dto: Partial<Appointment>): Observable<Appointment> {
-    return this.http.patch<Appointment>(`${API}/${id}`, dto).pipe(
+    return this.http.patch<Appointment>(`${API}/${id}?${A}`, dto).pipe(
       tap(a => updateAppointment(a))
     );
   }
 
   delete(id: string): Observable<void> {
-    return this.http.delete<void>(`${API}/${id}`).pipe(
+    return this.http.delete<void>(`${API}/${id}?${A}`).pipe(
       tap(() => removeAppointment(id))
     );
   }

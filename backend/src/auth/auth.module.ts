@@ -14,6 +14,6 @@ import { JWT_SECRET, JWT_EXPIRES } from './auth.constants';
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtAuthGuard],
-  exports: [JwtAuthGuard, JwtModule, AuthService],
+  exports: [JwtAuthGuard, JwtModule, AuthService, MongooseModule],
 })
 export class AuthModule {}

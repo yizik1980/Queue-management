@@ -12,7 +12,7 @@ export class SettingsService {
   private http = inject(HttpClient);
 
   load() {
-    return this.http.get<BusinessSettings>(API).pipe(
+    return this.http.get<BusinessSettings>(`${API}?admin=${environment.adminUsername}`).pipe(
       tap(s => settingsSignal.set(s))
     );
   }

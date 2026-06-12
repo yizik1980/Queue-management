@@ -1,4 +1,5 @@
 export class CreateAppointmentDto {
+  adminId: string;
   clientId: string;
   clientName: string;
   date: string;

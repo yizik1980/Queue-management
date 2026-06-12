@@ -9,14 +9,14 @@ export class SettingsService {
     @InjectModel(Settings.name) private model: Model<SettingsDocument>,
   ) {}
 
-  async getOrCreate(): Promise<SettingsDocument> {
-    let doc = await this.model.findOne().exec();
-    if (!doc) doc = await this.model.create({});
+  async getOrCreate(adminId: string): Promise<SettingsDocument> {
+    let doc = await this.model.findOne({ adminId }).exec();
+    if (!doc) doc = await this.model.create({ adminId });
     return doc;
   }
 
-  async update(dto: Partial<Settings>): Promise<SettingsDocument> {
-    const doc = await this.getOrCreate();
+  async update(adminId: string, dto: Partial<Settings>): Promise<SettingsDocument> {
+    const doc = await this.getOrCreate(adminId);
     Object.assign(doc, dto);
     return doc.save();
   }

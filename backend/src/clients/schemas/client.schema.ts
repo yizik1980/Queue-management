@@ -5,6 +5,7 @@ export type ClientDocument = Client & Document;
 
 @Schema({ timestamps: true, collection: 'clients' })
 export class Client {
+  @Prop({ required: true, index: true }) adminId: string;
   @Prop({ required: true }) name: string;
   @Prop({ required: true }) phone: string;
   @Prop({ default: '' }) email: string;
