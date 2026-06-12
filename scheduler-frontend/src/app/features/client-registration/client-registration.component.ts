@@ -2,6 +2,7 @@ import { Component, Output, EventEmitter, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LocalClientService } from '../../core/services/local-client.service';
+import { LanguageService } from '../../core/services/language.service';
 
 @Component({
   selector: 'app-client-registration',
@@ -12,9 +13,10 @@ import { LocalClientService } from '../../core/services/local-client.service';
 export class ClientRegistrationComponent {
   @Output() registered = new EventEmitter<void>();
 
-  private svc = inject(LocalClientService);
+  private svc      = inject(LocalClientService);
+  readonly langSvc = inject(LanguageService);
 
-  form = { name: '', phone: '', email: '' };
+  form   = { name: '', phone: '', email: '' };
   saving = signal(false);
   error  = signal('');
 
@@ -30,7 +32,7 @@ export class ClientRegistrationComponent {
       });
       this.registered.emit();
     } catch {
-      this.error.set('שגיאה בהרשמה — בדוק חיבור לשרת ונסה שנית.');
+      this.error.set(this.langSvc.tr().registrationError);
     } finally {
       this.saving.set(false);
     }

@@ -12,7 +12,7 @@
     <!-- Header -->
     <div class="flex items-center justify-between px-5 py-4 border-b-2 border-ink !bg-ink rounded-t-md">
       <h2 class="font-sketch text-2xl text-amber m-0">
-        {{ editing() ? '✏️ עריכת תור' : '➕ תור חדש' }}
+        {{ editing() ? langSvc.tr().editTitle : langSvc.tr().newTitle }}
       </h2>
       <button
         class="bg-transparent border-none text-white text-xl cursor-pointer px-2 py-1 rounded hover:bg-white/15"
@@ -27,14 +27,14 @@
       @if (limitReached()) {
         <div class="bg-crimson/15 border-2 border-crimson/50 rounded-md px-4 py-3 text-center">
           <div class="text-2xl mb-1">🚫</div>
-          <p class="font-sketch text-lg text-crimson font-bold m-0">הגעת למגבלת 2 תורים פעילים</p>
-          <p class="text-sm text-crimson/80 mt-1 mb-0">בטל תור קיים כדי לקבוע תור חדש.</p>
+          <p class="font-sketch text-lg text-crimson font-bold m-0">{{ langSvc.tr().limitTitle }}</p>
+          <p class="text-sm text-crimson/80 mt-1 mb-0">{{ langSvc.tr().limitBody }}</p>
         </div>
       }
 
       <!-- Client field -->
       <div>
-        <label class="form-label">👤 לקוח *</label>
+        <label class="form-label">{{ langSvc.tr().clientLabel }}</label>
         @if (localClient()) {
           <div class="flex items-center gap-2 px-3 py-2 border-2 border-ink rounded bg-white"
                style="box-shadow:2px 2px 0 #1a1a2e">
@@ -42,7 +42,7 @@
                   [style.background]="localClient()!.color"></span>
             <span class="font-semibold text-sm flex-1">{{ localClient()!.name }}</span>
             <span class="text-xs text-gray-400">{{ localClient()!.phone }}</span>
-            <span class="text-xs bg-violet/15 text-violet px-2 py-0.5 rounded-full border border-violet/30">אתה</span>
+            <span class="text-xs bg-violet/15 text-violet px-2 py-0.5 rounded-full border border-violet/30">{{ langSvc.tr().youBadge }}</span>
           </div>
         } @else if (clients().length > 0) {
           <select
@@ -52,21 +52,21 @@
             (change)="onClientChange()"
             required
           >
-            <option value="">-- בחר לקוח --</option>
+            <option value="">{{ langSvc.tr().selectClient }}</option>
             @for (c of clients(); track c._id) {
               <option [value]="c._id">{{ c.name }} | {{ c.phone }}</option>
             }
           </select>
         } @else {
           <div class="bg-amber/25 border border-amber rounded px-3 py-2 text-sm">
-            אין לקוחות עדיין.
+            {{ langSvc.tr().noClients }}
           </div>
         }
       </div>
 
       <!-- Date -->
       <div>
-        <label class="form-label">📅 תאריך *</label>
+        <label class="form-label">{{ langSvc.tr().dateLabel }}</label>
         <input
           class="form-input"
           type="date"
@@ -84,20 +84,17 @@
       <!-- Time slot picker -->
       @if (form.date) {
         <div>
-          <label class="form-label">⏰ בחירת שעה *</label>
+          <label class="form-label">{{ langSvc.tr().timeLabel }}</label>
 
           @if (!isWorkingDay()) {
-            <!-- Closed day -->
             <div class="bg-amber/20 border border-amber/60 rounded-md px-4 py-3 text-center text-sm text-amber-800">
-              🚫 יום {{ closedDayName() }} — לא יום עבודה
+              {{ langSvc.tr().closedDayText(closedDayName()) }}
             </div>
           } @else if (allSlots().length === 0) {
-            <!-- No future slots -->
             <div class="bg-gray-100 border border-gray-300 rounded-md px-4 py-3 text-center text-sm text-slate">
-              😔 אין זמינות ביום זה
+              {{ langSvc.tr().noAvailability }}
             </div>
           } @else {
-            <!-- Slot grid -->
             <div class="grid grid-cols-4 gap-1.5">
               @for (slot of allSlots(); track slot) {
                 @let booked = bookedSlots().has(slot);
@@ -119,7 +116,7 @@
             </div>
             @if (form.startTime) {
               <p class="text-xs text-violet mt-2 font-semibold">
-                ✅ נבחרה שעה: {{ form.startTime }}–{{ form.endTime }}
+                ✅ {{ langSvc.tr().selectedTimePrefix }}: {{ form.startTime }}–{{ form.endTime }}
               </p>
             }
           }
@@ -128,13 +125,13 @@
 
       <!-- Service -->
       <div>
-        <label class="form-label">🔹 שירות *</label>
+        <label class="form-label">{{ langSvc.tr().serviceLabel }}</label>
         <input
           class="form-input"
           type="text"
           [(ngModel)]="form.service"
           name="service"
-          placeholder="תספורת, צביעה, גוון..."
+          [placeholder]="langSvc.tr().servicePlaceholder"
           required
         />
       </div>
@@ -142,9 +139,9 @@
       <!-- Status buttons — admin mode only -->
       @if (!localClient()) {
         <div>
-          <label class="form-label">📌 סטטוס</label>
+          <label class="form-label">{{ langSvc.tr().statusLabel }}</label>
           <div class="flex flex-wrap gap-2">
-            @for (s of statuses; track s.value) {
+            @for (s of statuses(); track s.value) {
               <button
                 type="button"
                 class="btn-sketch text-base px-3 py-1.5"
@@ -159,7 +156,7 @@
 
       <!-- Color swatches -->
       <div>
-        <label class="form-label">🎨 צבע</label>
+        <label class="form-label">{{ langSvc.tr().colorLabel }}</label>
         <div class="flex flex-wrap gap-2">
           @for (c of colors; track c) {
             <div
@@ -175,13 +172,13 @@
 
       <!-- Notes -->
       <div>
-        <label class="form-label">📝 הערות</label>
+        <label class="form-label">{{ langSvc.tr().notesLabel }}</label>
         <textarea
           class="form-input resize-y min-h-[64px]"
           [(ngModel)]="form.notes"
           name="notes"
           rows="2"
-          placeholder="הערות נוספות..."
+          [placeholder]="langSvc.tr().notesPlaceholder"
         ></textarea>
       </div>
 
@@ -193,14 +190,14 @@
             class="btn-sketch bg-crimson/25 text-crimson px-4 py-2 me-auto"
             (click)="delete()"
             [disabled]="deleting()"
-          >{{ deleting() ? 'מוחק...' : '🗑 מחק' }}</button>
+          >{{ deleting() ? langSvc.tr().deletingText : langSvc.tr().deleteBtn }}</button>
         }
-        <button type="button" class="btn-sketch bg-cream px-4 py-2" (click)="close.emit()">ביטול</button>
+        <button type="button" class="btn-sketch bg-cream px-4 py-2" (click)="close.emit()">{{ langSvc.tr().cancelBtn }}</button>
         <button
           type="submit"
           class="btn-sketch bg-mint text-white px-4 py-2"
           [disabled]="saving() || !form.clientId || !form.date || !form.service || !form.startTime || limitReached()"
-        >{{ saving() ? 'שומר...' : (editing() ? '💾 עדכן' : '✅ שמור') }}</button>
+        >{{ saving() ? langSvc.tr().savingText : (editing() ? langSvc.tr().updateBtn : langSvc.tr().saveBtn) }}</button>
       </div>
 
     </form>

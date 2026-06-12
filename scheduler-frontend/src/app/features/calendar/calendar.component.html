@@ -15,7 +15,7 @@
   <header class="shrink-0 flex items-center justify-between px-3 sm:px-4 py-2 bg-ink text-white">
 
     <h1 class="font-sketch text-xl sm:text-2xl font-bold text-amber m-0 leading-tight"
-        style="text-shadow:2px 2px 0 rgba(0,0,0,.4)">יומן תורים</h1>
+        style="text-shadow:2px 2px 0 rgba(0,0,0,.4)">{{ langSvc.tr().appTitle }}</h1>
 
     <nav class="flex gap-1.5 sm:gap-2 items-center">
 
@@ -32,22 +32,28 @@
         </div>
       }
 
-      <!-- Theme toggle — label on desktop, icon on mobile -->
+      <!-- Language toggle -->
+      <button
+        class="btn-sketch bg-white/15 text-white px-2 py-1 text-xs sm:text-sm font-mono"
+        (click)="langSvc.toggle()"
+        [title]="langSvc.tr().langToggle"
+      >{{ langSvc.tr().langToggle }}</button>
+
+      <!-- Theme toggle -->
       <button
         class="btn-sketch bg-white/15 text-white px-2 py-1 text-xs sm:text-sm"
         (click)="themeSvc.toggle()"
-        [title]="'עבור ל-' + (themeSvc.current() === 'sketch' ? 'תבנית נקייה' : 'תבנית קריקטורה')"
       >
-        <span class="hidden sm:inline">{{ themeSvc.labels[themeSvc.current()] }}</span>
+        <span class="hidden sm:inline">{{ themeSvc.current() === 'sketch' ? langSvc.tr().themeSketch : langSvc.tr().themeClean }}</span>
         <span class="sm:hidden">🎨</span>
       </button>
 
-      <!-- New appointment — text on desktop, icon on mobile -->
+      <!-- New appointment -->
       <button
         class="btn-sketch bg-mint text-white px-2 sm:px-3 py-1 text-sm sm:text-base"
         (click)="openNewAppointment()"
       >
-        <span class="hidden sm:inline">➕ תור חדש</span>
+        <span class="hidden sm:inline">{{ langSvc.tr().newAppointmentBtn }}</span>
         <span class="sm:hidden">➕</span>
       </button>
 
@@ -55,7 +61,10 @@
   </header>
 
   <!-- ── Month navigation — desktop only ──────────────────────────────── -->
-  <div class="shrink-0 hidden md:flex items-center justify-between px-4 py-1.5 bg-white border-b border-ink/20">
+  <div
+    class="shrink-0 hidden md:flex items-center justify-between px-4 py-1.5 bg-white border-b border-ink/20"
+    [class.flex-row-reverse]="!langSvc.isRTL()"
+  >
     <button class="btn-sketch bg-amber px-3 py-1 text-xl font-bold min-w-[36px]"
             (click)="nextMonth()">→</button>
     <div class="text-center">
@@ -78,7 +87,7 @@
     <!-- Slots list -->
     <div class="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-2">
       @if (todaySlotList().length === 0) {
-        <p class="text-center text-gray-400 text-sm mt-10">אין שעות עבודה להיום</p>
+        <p class="text-center text-gray-400 text-sm mt-10">{{ langSvc.tr().noWorkingHours }}</p>
       }
       @for (slot of todaySlotList(); track slot.time) {
         <div
@@ -99,7 +108,7 @@
             </div>
             <div class="w-2 h-2 rounded-full shrink-0" [style.background]="slot.appointment.color"></div>
           } @else if (!slot.isPast) {
-            <span class="text-xs text-gray-400 flex-1">פנוי</span>
+            <span class="text-xs text-gray-400 flex-1">{{ langSvc.tr().free }}</span>
             <span class="text-gray-300 text-sm leading-none">＋</span>
           } @else {
             <span class="text-xs text-gray-300 flex-1">—</span>
@@ -111,7 +120,7 @@
     <!-- Add button -->
     <div class="shrink-0 px-4 pb-4 pt-2">
       <button class="btn-sketch w-full bg-mint text-white py-2 text-sm" (click)="openNewAppointment()">
-        ➕ תור חדש
+        {{ langSvc.tr().newAppointmentBtn }}
       </button>
     </div>
 
@@ -122,7 +131,7 @@
 
     <!-- Weekday headers -->
     <div class="shrink-0 grid grid-cols-7 gap-[3px]">
-      @for (day of weekDays; track day) {
+      @for (day of weekDays(); track day) {
         <div class="text-center font-sketch text-xs font-bold py-1 bg-ink text-amber rounded-sm">
           {{ day }}
         </div>
@@ -183,7 +192,7 @@
   <!-- ── Modals ─────────────────────────────────────────────────────────── -->
   @if (loading()) {
     <div class="fixed bottom-4 end-4 z-50 bg-amber border-2 border-ink rounded px-3 py-1.5 font-sketch text-sm shadow-sketch">
-      טוען...
+      {{ langSvc.tr().loading }}
     </div>
   }
 

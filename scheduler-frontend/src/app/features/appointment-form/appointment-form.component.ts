@@ -5,6 +5,7 @@ import { Appointment, AppointmentStatus } from '../../core/models/appointment.mo
 import { generateTimeSlots } from '../../core/models/settings.model';
 import { AppointmentsService } from '../../core/services/appointments.service';
 import { HebrewDateService } from '../../core/services/hebrew-date.service';
+import { LanguageService } from '../../core/services/language.service';
 import {
   clientsSignal, selectedAppointmentSignal, selectedDateSignal,
   localClientSignal, localClientActiveAppointments, settingsSignal,
@@ -15,8 +16,6 @@ const APPOINTMENT_COLORS = [
   '#e84393', '#6c5ce7', '#00b894', '#fdcb6e', '#0984e3',
   '#e17055', '#a29bfe', '#55efc4', '#fab1a0', '#74b9ff',
 ];
-
-const DAY_NAMES = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
 
 @Component({
   selector: 'app-appointment-form',
@@ -30,26 +29,24 @@ export class AppointmentFormComponent implements OnInit {
 
   private svc       = inject(AppointmentsService);
   private hebrewSvc = inject(HebrewDateService);
+  readonly langSvc  = inject(LanguageService);
 
   readonly clients     = clientsSignal;
   readonly localClient = localClientSignal;
   readonly editing     = computed(() => !!selectedAppointmentSignal());
   readonly colors      = APPOINTMENT_COLORS;
 
-  /** Minimum selectable date = today (YYYY-MM-DD) */
   readonly today = (() => {
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   })();
 
-  /** True when client mode and already at the 2-appointment limit (new only) */
   readonly limitReached = computed(() => {
     if (!localClientSignal()) return false;
     if (selectedAppointmentSignal()) return false;
     return localClientActiveAppointments().length >= 2;
   });
 
-  /** Is the selected date a working day? */
   readonly isWorkingDay = computed(() => {
     const s = settingsSignal();
     const date = this.formDate();
@@ -58,14 +55,12 @@ export class AppointmentFormComponent implements OnInit {
     return s.workingDays.includes(dow);
   });
 
-  /** Closed day label */
   readonly closedDayName = computed(() => {
     const date = this.formDate();
     if (!date) return '';
-    return DAY_NAMES[new Date(date + 'T12:00:00').getDay()];
+    return this.langSvc.tr().dayNames[new Date(date + 'T12:00:00').getDay()];
   });
 
-  /** All time slots for the selected date (past slots excluded when today) */
   readonly allSlots = computed(() => {
     const s = settingsSignal();
     const date = this.formDate();
@@ -73,7 +68,6 @@ export class AppointmentFormComponent implements OnInit {
     return generateTimeSlots(s, date);
   });
 
-  /** Set of already-booked start times for the selected date (excludes current editing apt) */
   readonly bookedSlots = computed(() => {
     const date = this.formDate();
     const editingId = selectedAppointmentSignal()?._id;
@@ -85,9 +79,15 @@ export class AppointmentFormComponent implements OnInit {
     );
   });
 
+  readonly statuses = computed<{ value: AppointmentStatus; label: string }[]>(() => [
+    { value: 'pending',   label: this.langSvc.tr().statusPending },
+    { value: 'confirmed', label: this.langSvc.tr().statusConfirmed },
+    { value: 'cancelled', label: this.langSvc.tr().statusCancelled },
+    { value: 'completed', label: this.langSvc.tr().statusCompleted },
+  ]);
+
   saving    = signal(false);
   deleting  = signal(false);
-  /** Reactive mirror of form.date — drives all computed slots/day checks */
   private formDate = signal('');
 
   form: Partial<Appointment> & { clientId: string } = {
@@ -152,7 +152,6 @@ export class AppointmentFormComponent implements OnInit {
     if (!this.form.clientId || !this.form.date || !this.form.service || !this.form.startTime) return;
     if (this.limitReached()) return;
 
-    // Clients always submit as pending — admin changes the status
     if (localClientSignal()) this.form.status = 'pending';
 
     this.saving.set(true);
@@ -173,15 +172,8 @@ export class AppointmentFormComponent implements OnInit {
   delete(): void {
     const id = selectedAppointmentSignal()?._id;
     if (!id) return;
-    if (!confirm('למחוק את התור?')) return;
+    if (!confirm(this.langSvc.tr().deleteConfirm)) return;
     this.deleting.set(true);
     this.svc.delete(id).subscribe({ next: () => { this.deleting.set(false); this.close.emit(); } });
   }
-
-  statuses: { value: AppointmentStatus; label: string }[] = [
-    { value: 'pending',   label: 'ממתין לאישור' },
-    { value: 'confirmed', label: 'מאושר' },
-    { value: 'cancelled', label: 'בוטל' },
-    { value: 'completed', label: 'הושלם' },
-  ];
 }

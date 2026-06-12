@@ -2,6 +2,7 @@ import { Component, OnInit, inject, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ThemeService } from '../../core/services/theme.service';
+import { LanguageService } from '../../core/services/language.service';
 import { AppointmentDay, Appointment } from '../../core/models/appointment.model';
 import { generateAllTimeSlots } from '../../core/models/settings.model';
 import { HebrewDateService } from '../../core/services/hebrew-date.service';
@@ -23,12 +24,6 @@ interface TodaySlot {
   isPast: boolean;
 }
 
-const HEBREW_DAYS = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'שבת'];
-const GREGORIAN_MONTHS = [
-  'ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני',
-  'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר',
-];
-
 @Component({
   selector: 'app-calendar',
   standalone: true,
@@ -37,20 +32,22 @@ const GREGORIAN_MONTHS = [
   styleUrl: './calendar.component.scss',
 })
 export class CalendarComponent implements OnInit {
-  private hebrewSvc      = inject(HebrewDateService);
+  private hebrewSvc       = inject(HebrewDateService);
   private appointmentsSvc = inject(AppointmentsService);
-private localClientSvc = inject(LocalClientService);
-  private settingsSvc    = inject(SettingsService);
-  readonly themeSvc      = inject(ThemeService);
+  private localClientSvc  = inject(LocalClientService);
+  private settingsSvc     = inject(SettingsService);
+  readonly themeSvc       = inject(ThemeService);
+  readonly langSvc        = inject(LanguageService);
 
-  readonly loading       = loadingSignal;
-  readonly showForm      = showFormSignal;
-  readonly selectedDate  = selectedDateSignal;
-  readonly localClient   = localClientSignal;
-  readonly monthApps     = currentMonthAppointments;
-  readonly weekDays      = HEBREW_DAYS;
+  readonly loading      = loadingSignal;
+  readonly showForm     = showFormSignal;
+  readonly selectedDate = selectedDateSignal;
+  readonly localClient  = localClientSignal;
+  readonly monthApps    = currentMonthAppointments;
 
   showRegistration = signal(false);
+
+  readonly weekDays = computed(() => this.langSvc.tr().weekDays);
 
   readonly todayStr = computed(() => {
     const now = new Date();
@@ -59,8 +56,8 @@ private localClientSvc = inject(LocalClientService);
 
   readonly todayGregorianLabel = computed(() => {
     const now = new Date();
-    const days = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
-    return `יום ${days[now.getDay()]}, ${now.getDate()} ב${GREGORIAN_MONTHS[now.getMonth()]}`;
+    const t = this.langSvc.tr();
+    return t.formatTodayLabel(t.dayNames[now.getDay()], now.getDate(), t.months[now.getMonth()]);
   });
 
   readonly todayHebrewFull = computed(() =>
@@ -89,7 +86,7 @@ private localClientSvc = inject(LocalClientService);
 
   readonly monthTitle = computed(() => {
     const d = currentDateSignal();
-    return `${GREGORIAN_MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+    return `${this.langSvc.tr().months[d.getMonth()]} ${d.getFullYear()}`;
   });
 
   readonly hebrewMonthTitle = computed(() =>
