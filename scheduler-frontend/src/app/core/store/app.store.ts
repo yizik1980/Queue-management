@@ -3,6 +3,14 @@ import { Appointment } from '../models/appointment.model';
 import { Client } from '../models/client.model';
 import { BusinessSettings } from '../models/settings.model';
 
+// ── Admin identity (set from URL route on first load) ─────────────────────
+export const adminIdSignal = signal<string>(localStorage.getItem('adminId') ?? '');
+
+export function setAdminId(id: string): void {
+  localStorage.setItem('adminId', id);
+  adminIdSignal.set(id);
+}
+
 // ── Settings ────────────────────────────────────────────────────────────────
 export const settingsSignal = signal<BusinessSettings | null>(null);
 

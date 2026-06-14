@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ThemeService } from '../../core/services/theme.service';
 import { LanguageService } from '../../core/services/language.service';
 import { AppointmentDay, Appointment } from '../../core/models/appointment.model';
@@ -13,7 +13,7 @@ import {
   currentDateSignal, selectedDateSignal, appointmentsByDate,
   currentMonthAppointments, navigateMonth, showFormSignal,
   selectedAppointmentSignal, loadingSignal, localClientSignal,
-  settingsSignal, appointmentsSignal,
+  settingsSignal, appointmentsSignal, setAdminId,
 } from '../../core/store/app.store';
 import { AppointmentFormComponent } from '../appointment-form/appointment-form.component';
 import { ClientRegistrationComponent } from '../client-registration/client-registration.component';
@@ -32,18 +32,19 @@ interface TodaySlot {
   styleUrl: './calendar.component.scss',
 })
 export class CalendarComponent implements OnInit {
-  private hebrewSvc       = inject(HebrewDateService);
+  private hebrewSvc = inject(HebrewDateService);
   private appointmentsSvc = inject(AppointmentsService);
-  private localClientSvc  = inject(LocalClientService);
-  private settingsSvc     = inject(SettingsService);
-  readonly themeSvc       = inject(ThemeService);
-  readonly langSvc        = inject(LanguageService);
+  private localClientSvc = inject(LocalClientService);
+  private settingsSvc = inject(SettingsService);
+  readonly themeSvc = inject(ThemeService);
+  readonly langSvc = inject(LanguageService);
+  readonly activeRoute = inject(ActivatedRoute);
 
-  readonly loading      = loadingSignal;
-  readonly showForm     = showFormSignal;
+  readonly loading = loadingSignal;
+  readonly showForm = showFormSignal;
   readonly selectedDate = selectedDateSignal;
-  readonly localClient  = localClientSignal;
-  readonly monthApps    = currentMonthAppointments;
+  readonly localClient = localClientSignal;
+  readonly monthApps = currentMonthAppointments;
 
   showRegistration = signal(false);
 
@@ -99,7 +100,7 @@ export class CalendarComponent implements OnInit {
     const todayStr = this.toDateStr(new Date());
 
     const firstDay = new Date(d.getFullYear(), d.getMonth(), 1);
-    const lastDay  = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+    const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0);
     const startDow = firstDay.getDay();
     const days: AppointmentDay[] = [];
 
@@ -126,9 +127,18 @@ export class CalendarComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.appointmentsSvc.loadAll().subscribe();
-    this.settingsSvc.load().subscribe();
-    this.checkLocalClient();
+    this.activeRoute.paramMap.subscribe(params => {
+      const adminId = params.get('adminId')
+      console.log('Loaded calendar for admin ID:', adminId);
+      if (!adminId) {
+        console.error('Admin ID is required in the route');
+        return;
+      }
+      setAdminId(adminId);
+      this.appointmentsSvc.loadAll().subscribe();
+      this.settingsSvc.load().subscribe();
+      this.checkLocalClient();
+    });
   }
 
   private async checkLocalClient(): Promise<void> {
