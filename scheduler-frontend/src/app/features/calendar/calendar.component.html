@@ -1,5 +1,10 @@
+@if (adminNotFound()) {
+  <app-not-found [adminId]="checkedAdminId()" />
+}
+
 <!-- Root: full viewport, no scroll -->
-<div class="h-screen overflow-hidden flex flex-col bg-cream font-body">
+<div class="h-screen overflow-hidden flex flex-col bg-cream font-body"
+     [class.invisible]="adminNotFound()">
 
   <!-- SVG sketch wobble filter -->
   <svg width="0" height="0" class="absolute pointer-events-none">

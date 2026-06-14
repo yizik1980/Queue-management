@@ -21,11 +21,13 @@
 
   --shadow-card:       3px 3px 0 rgb(var(--c-ink));
   --shadow-card-hover: 4px 4px 0 rgb(var(--c-ink));
-  --shadow-btn:        2px 2px 0 rgb(var(--c-ink));
-  --shadow-focus:      2px 2px 0 rgb(var(--c-violet));
+  --shadow-btn:        0 2px 0 rgb(var(--c-ink) / 0.18), 0 1px 4px rgb(0 0 0 / 0.07);
+  --shadow-btn-hover:  0 4px 0 rgb(var(--c-ink) / 0.14), 0 2px 8px rgb(0 0 0 / 0.09);
+  --shadow-focus:      0 0 0 3px rgb(var(--c-violet) / 0.28);
 
   --border-w:    2px;
   --radius-card: 0.375rem;
+  --radius-btn:  1.5rem;
   --sketch-deco: 1;
   --sketch-deco-offset: -3px;
 }
@@ -66,11 +68,15 @@
   .btn-sketch {
     @apply text-lg cursor-pointer transition-all select-none;
     font-family: var(--font-display), sans-serif;
-    border: var(--border-w) solid rgb(var(--c-ink));
-    border-radius: var(--radius-card);
+    border: 1.5px solid rgb(var(--c-ink) / 0.45);
+    border-radius: var(--radius-btn);
     box-shadow: var(--shadow-btn);
-    &:active {
-      transform: translate(2px, 2px);
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-btn-hover);
+    }
+    &:active:not(:disabled) {
+      transform: translateY(1px);
       box-shadow: none;
     }
     &:disabled { @apply opacity-50 cursor-not-allowed; }

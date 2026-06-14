@@ -19,12 +19,14 @@
   // ── Shadow tokens (soft, layered)
   --shadow-card:       0 1px 3px rgb(0 0 0 / 0.08), 0 1px 2px rgb(0 0 0 / 0.05);
   --shadow-card-hover: 0 4px 12px rgb(0 0 0 / 0.10), 0 2px 4px rgb(0 0 0 / 0.06);
-  --shadow-btn:        0 1px 2px rgb(0 0 0 / 0.06);
+  --shadow-btn:        0 1px 3px rgb(0 0 0 / 0.10), 0 1px 2px rgb(0 0 0 / 0.06);
+  --shadow-btn-hover:  0 3px 8px rgb(0 0 0 / 0.13), 0 2px 4px rgb(0 0 0 / 0.07);
   --shadow-focus:      0 0 0 3px rgb(var(--c-violet) / 0.25);
 
   // ── Shape tokens
   --border-w:    1px;
   --radius-card: 0.75rem;    // rounded-xl
+  --radius-btn:  0.75rem;
 
   // ── No sketch decorations
   --sketch-deco: 0;

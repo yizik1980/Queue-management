@@ -1,0 +1,79 @@
+<div class="nf-root" dir="rtl">
+
+  <!-- Ambient blobs -->
+  <div class="nf-blob nf-blob-1"></div>
+  <div class="nf-blob nf-blob-2"></div>
+  <div class="nf-blob nf-blob-3"></div>
+
+  <!-- Floating decorations -->
+  <span class="nf-float" style="top:8%;left:6%;font-size:2.4rem;--delay:0s">✂️</span>
+  <span class="nf-float" style="top:14%;right:9%;font-size:1.9rem;--delay:1.3s">📅</span>
+  <span class="nf-float" style="bottom:20%;left:11%;font-size:1.7rem;--delay:0.7s">🖊️</span>
+  <span class="nf-float" style="bottom:13%;right:7%;font-size:2.1rem;--delay:2.1s">📋</span>
+  <span class="nf-float" style="top:50%;left:3%;font-size:1.4rem;--delay:1.8s">⏰</span>
+  <span class="nf-float" style="top:35%;right:4%;font-size:1.6rem;--delay:0.4s">📌</span>
+
+  <!-- Card -->
+  <article class="nf-card">
+
+    <!-- Ticket cut line — top -->
+    <div class="nf-ticket-edge nf-ticket-top">
+      <div class="nf-circles-row">
+        @for (i of circles; track i) { <div class="nf-circle"></div> }
+      </div>
+    </div>
+
+    <!-- Card body -->
+    <div class="nf-body">
+
+      <!-- SVG sketch wobble filter (reuse app filter id) -->
+      <svg width="0" height="0" class="nf-filter-def" aria-hidden="true">
+        <defs>
+          <filter id="nf-sketch">
+            <feTurbulence type="turbulence" baseFrequency="0.025" numOctaves="2" result="noise" seed="9"/>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5"
+                               xChannelSelector="R" yChannelSelector="G"/>
+          </filter>
+        </defs>
+      </svg>
+
+      <!-- Error label -->
+      <p class="nf-eyebrow">שגיאה &nbsp;·&nbsp; Error</p>
+
+      <!-- 404 -->
+      <div class="nf-num-row" aria-label="404" style="filter:url(#nf-sketch)">
+        <span class="nf-digit" style="--d:0">4</span>
+        <span class="nf-digit nf-zero" style="--d:1">0</span>
+        <span class="nf-digit" style="--d:2">4</span>
+      </div>
+
+      <!-- Divider -->
+      <div class="nf-divider" aria-hidden="true">
+        <span class="nf-line"></span>
+        <span class="nf-diamond">◆</span>
+        <span class="nf-line"></span>
+      </div>
+
+      <h1 class="nf-title">המנהל לא נמצא</h1>
+
+      <p class="nf-desc">
+        הקישור שגוי, או שהחשבון הוסר מהמערכת.<br>
+        לא קיים מנהל עם המזהה הזה.
+      </p>
+
+      @if (adminId()) {
+        <p class="nf-id-tag">מזהה: {{ adminId() }}</p>
+      }
+
+    </div>
+
+    <!-- Ticket cut line — bottom -->
+    <div class="nf-ticket-edge nf-ticket-bottom">
+      <div class="nf-circles-row">
+        @for (i of circles; track i) { <div class="nf-circle"></div> }
+      </div>
+    </div>
+
+  </article>
+
+</div>

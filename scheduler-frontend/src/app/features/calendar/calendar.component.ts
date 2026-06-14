@@ -17,6 +17,8 @@ import {
 } from '../../core/store/app.store';
 import { AppointmentFormComponent } from '../appointment-form/appointment-form.component';
 import { ClientRegistrationComponent } from '../client-registration/client-registration.component';
+import { NotFoundComponent } from '../not-found/not-found.component';
+import { AdminCheckService } from '../../core/services/admin-check.service';
 
 interface TodaySlot {
   time: string;
@@ -27,7 +29,7 @@ interface TodaySlot {
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [CommonModule, RouterModule, AppointmentFormComponent, ClientRegistrationComponent],
+  imports: [CommonModule, RouterModule, AppointmentFormComponent, ClientRegistrationComponent, NotFoundComponent],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.scss',
 })
@@ -36,6 +38,7 @@ export class CalendarComponent implements OnInit {
   private appointmentsSvc = inject(AppointmentsService);
   private localClientSvc = inject(LocalClientService);
   private settingsSvc = inject(SettingsService);
+  private adminCheckSvc = inject(AdminCheckService);
   readonly themeSvc = inject(ThemeService);
   readonly langSvc = inject(LanguageService);
   readonly activeRoute = inject(ActivatedRoute);
@@ -47,6 +50,8 @@ export class CalendarComponent implements OnInit {
   readonly monthApps = currentMonthAppointments;
 
   showRegistration = signal(false);
+  adminNotFound   = signal(false);
+  checkedAdminId  = signal('');
 
   readonly weekDays = computed(() => this.langSvc.tr().weekDays);
 
@@ -128,16 +133,16 @@ export class CalendarComponent implements OnInit {
 
   ngOnInit(): void {
     this.activeRoute.paramMap.subscribe(params => {
-      const adminId = params.get('adminId')
-      console.log('Loaded calendar for admin ID:', adminId);
-      if (!adminId) {
-        console.error('Admin ID is required in the route');
-        return;
-      }
-      setAdminId(adminId);
-      this.appointmentsSvc.loadAll().subscribe();
-      this.settingsSvc.load().subscribe();
-      this.checkLocalClient();
+      const adminId = params.get('adminId');
+      if (!adminId) return;
+      this.checkedAdminId.set(adminId);
+      this.adminCheckSvc.exists(adminId).subscribe(exists => {
+        if (!exists) { this.adminNotFound.set(true); return; }
+        setAdminId(adminId);
+        this.appointmentsSvc.loadAll().subscribe();
+        this.settingsSvc.load().subscribe();
+        this.checkLocalClient();
+      });
     });
   }
 

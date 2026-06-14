@@ -1,0 +1,222 @@
+:host { display: contents; }
+
+// ── Root ──────────────────────────────────────────────────────────────────────
+.nf-root {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 9000;
+  font-family: 'Heebo', sans-serif;
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 35%, #232345 0%, #1a1a2e 55%, #0e0e1e 100%);
+}
+
+// ── Ambient blobs ─────────────────────────────────────────────────────────────
+.nf-blob {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: nf-pulse 14s ease-in-out infinite;
+
+  &-1 {
+    width: 420px; height: 420px;
+    top: -100px; left: -80px;
+    background: radial-gradient(circle, rgb(108 92 231 / 0.18) 0%, transparent 70%);
+  }
+  &-2 {
+    width: 300px; height: 300px;
+    bottom: -70px; right: -50px;
+    background: radial-gradient(circle, rgb(232 67 147 / 0.14) 0%, transparent 70%);
+    animation-delay: 4s;
+  }
+  &-3 {
+    width: 240px; height: 240px;
+    top: 38%; left: 58%;
+    background: radial-gradient(circle, rgb(0 184 148 / 0.10) 0%, transparent 70%);
+    animation-delay: 8s;
+  }
+}
+
+// ── Floating emojis ───────────────────────────────────────────────────────────
+.nf-float {
+  position: absolute;
+  user-select: none;
+  pointer-events: none;
+  opacity: 0.16;
+  animation: nf-float var(--delay, 0s);
+  animation-name: nf-float-anim;
+  animation-duration: 7s;
+  animation-delay: var(--delay, 0s);
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
+
+// ── Card ──────────────────────────────────────────────────────────────────────
+.nf-card {
+  position: relative;
+  width: min(400px, 88vw);
+  background: #fef9e7;
+  border: 2px solid rgb(26 26 46 / 0.70);
+  border-radius: 0.5rem;
+  box-shadow:
+    5px 5px 0 rgb(26 26 46 / 0.75),
+    0 24px 64px rgb(0 0 0 / 0.55);
+  animation: nf-card-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  overflow: hidden;
+}
+
+// ── Ticket perforated edges ───────────────────────────────────────────────────
+.nf-ticket-edge {
+  background: #fef9e7;
+  position: relative;
+  overflow: hidden;
+
+  &.nf-ticket-top {
+    border-bottom: 1.5px dashed rgb(26 26 46 / 0.18);
+  }
+  &.nf-ticket-bottom {
+    border-top: 1.5px dashed rgb(26 26 46 / 0.18);
+  }
+}
+
+.nf-circles-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 -10px;
+  position: relative;
+}
+
+.nf-circle {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #1a1a2e;   // matches the dark root bg so they look "punched out"
+  flex-shrink: 0;
+  transform: translateY(50%);
+
+  .nf-ticket-top & { transform: translateY(-50%); }
+}
+
+// ── Body ──────────────────────────────────────────────────────────────────────
+.nf-body {
+  padding: 1.5rem 2rem 1.75rem;
+  text-align: center;
+}
+
+.nf-filter-def {
+  position: absolute;
+  pointer-events: none;
+}
+
+// ── Eyebrow ───────────────────────────────────────────────────────────────────
+.nf-eyebrow {
+  font-size: 0.65rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgb(108 92 231 / 0.55);
+  font-weight: 700;
+  margin: 0 0 0.4rem;
+  animation: nf-fade-up 0.4s ease 0.05s both;
+}
+
+// ── 404 ───────────────────────────────────────────────────────────────────────
+.nf-num-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Caveat', cursive;
+  font-size: clamp(5.5rem, 22vw, 8.5rem);
+  font-weight: 700;
+  line-height: 1;
+  color: #1a1a2e;
+  margin: 0 0 0.15em;
+}
+
+.nf-digit {
+  display: inline-block;
+  animation: nf-bounce-in 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--d) * 0.12s) both;
+}
+
+.nf-zero {
+  color: rgb(232 67 147);
+}
+
+// ── Divider ───────────────────────────────────────────────────────────────────
+.nf-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.1rem 0 1.1rem;
+  animation: nf-fade-up 0.4s ease 0.35s both;
+}
+
+.nf-line {
+  flex: 1;
+  height: 1px;
+  background: rgb(26 26 46 / 0.15);
+}
+
+.nf-diamond {
+  font-size: 0.45rem;
+  color: rgb(108 92 231 / 0.35);
+}
+
+// ── Text ──────────────────────────────────────────────────────────────────────
+.nf-title {
+  font-family: 'Caveat', cursive;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 0.5rem;
+  animation: nf-fade-up 0.4s ease 0.42s both;
+}
+
+.nf-desc {
+  font-size: 0.85rem;
+  color: rgb(26 26 46 / 0.48);
+  line-height: 1.75;
+  margin: 0 0 0.75rem;
+  animation: nf-fade-up 0.4s ease 0.50s both;
+}
+
+.nf-id-tag {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-family: monospace;
+  color: rgb(26 26 46 / 0.30);
+  background: rgb(26 26 46 / 0.05);
+  border: 1px solid rgb(26 26 46 / 0.10);
+  border-radius: 4px;
+  padding: 0.2rem 0.6rem;
+  margin: 0;
+  animation: nf-fade-up 0.4s ease 0.58s both;
+}
+
+// ── Keyframes ─────────────────────────────────────────────────────────────────
+@keyframes nf-pulse {
+  0%, 100% { transform: scale(1);    opacity: 1;   }
+  50%       { transform: scale(1.18); opacity: 0.7; }
+}
+
+@keyframes nf-float-anim {
+  0%, 100% { transform: translateY(0)    rotate(-3deg); }
+  50%       { transform: translateY(-14px) rotate(4deg); }
+}
+
+@keyframes nf-card-in {
+  from { opacity: 0; transform: translateY(28px) scale(0.94); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+@keyframes nf-bounce-in {
+  from { opacity: 0; transform: translateY(-28px) scale(0.65); }
+  to   { opacity: 1; transform: translateY(0)      scale(1);    }
+}
+
+@keyframes nf-fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}

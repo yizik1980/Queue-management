@@ -32,6 +32,10 @@ export class AuthService implements OnApplicationBootstrap {
     return this.adminModel.findOne({ username }).exec();
   }
 
+  findById(id: string): Promise<AdminDocument | null> {
+    return this.adminModel.findById(id).exec();
+  }
+
   async validateAdmin(username: string, password: string): Promise<AdminDocument | null> {
     const admin = await this.adminModel.findOne({ username }).exec();
     if (!admin) return null;
