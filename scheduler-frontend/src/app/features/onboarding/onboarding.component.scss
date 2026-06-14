@@ -1,0 +1,143 @@
+:host { display: contents; }
+
+// ── Wrapper — anchors card to the bottom-center ───────────────────────────────
+.ob-wrap {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 800;
+  pointer-events: none;     // let clicks through the gap between arrow and card
+  animation: ob-slide-up 0.45s cubic-bezier(0.34, 1.45, 0.64, 1) both;
+  width: min(420px, 92vw);
+}
+
+// ── Arrow pointing up at the calendar ────────────────────────────────────────
+.ob-arrow {
+  font-size: 1.1rem;
+  color: rgb(26 26 46);
+  line-height: 1;
+  margin-bottom: -2px;
+  animation: ob-bounce 1.6s ease-in-out 0.6s infinite;
+  pointer-events: none;
+  filter: drop-shadow(0 -1px 0 rgb(26 26 46 / 0.3));
+}
+
+// ── Card ─────────────────────────────────────────────────────────────────────
+.ob-card {
+  pointer-events: all;
+  position: relative;
+  width: 100%;
+  background: #fef9e7;
+  border: 2px solid rgb(26 26 46 / 0.75);
+  border-radius: 1rem;
+  box-shadow:
+    4px 4px 0 rgb(26 26 46 / 0.70),
+    0 12px 40px rgb(0 0 0 / 0.20);
+  padding: 1.1rem 1.25rem 1rem;
+  font-family: 'Heebo', sans-serif;
+}
+
+// ── Close ─────────────────────────────────────────────────────────────────────
+.ob-close {
+  position: absolute;
+  top: 0.55rem;
+  inset-inline-end: 0.65rem;
+  background: none;
+  border: none;
+  font-size: 0.85rem;
+  color: rgb(26 26 46 / 0.35);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.2rem 0.3rem;
+  border-radius: 4px;
+  transition: color 0.15s, background 0.15s;
+
+  &:hover {
+    color: rgb(26 26 46 / 0.75);
+    background: rgb(26 26 46 / 0.06);
+  }
+}
+
+// ── Title ─────────────────────────────────────────────────────────────────────
+.ob-title {
+  font-family: 'Caveat', cursive;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 0.7rem;
+  padding-inline-end: 1.5rem;    // don't overlap close button
+}
+
+// ── Tips list ─────────────────────────────────────────────────────────────────
+.ob-tips {
+  list-style: none;
+  margin: 0 0 0.9rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.ob-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  font-size: 0.82rem;
+  color: rgb(26 26 46 / 0.72);
+  line-height: 1.45;
+  opacity: 0;
+  animation: ob-fade-in 0.35s ease calc(0.25s + var(--i) * 0.1s) forwards;
+}
+
+.ob-tip-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+  margin-top: 0.05rem;
+}
+
+// ── CTA button ────────────────────────────────────────────────────────────────
+.ob-btn {
+  width: 100%;
+  padding: 0.55rem 1rem;
+  background: rgb(0 184 148);     // mint
+  color: #fff;
+  border: 1.5px solid rgb(26 26 46 / 0.40);
+  border-radius: 1.5rem;
+  font-family: 'Caveat', cursive;
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 0 rgb(26 26 46 / 0.18), 0 1px 4px rgb(0 0 0 / 0.07);
+  transition: transform 0.15s, box-shadow 0.15s;
+  animation: ob-fade-in 0.35s ease 0.60s both;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 0 rgb(26 26 46 / 0.14), 0 3px 10px rgb(0 0 0 / 0.10);
+  }
+
+  &:active {
+    transform: translateY(1px);
+    box-shadow: none;
+  }
+}
+
+// ── Keyframes ─────────────────────────────────────────────────────────────────
+@keyframes ob-slide-up {
+  from { opacity: 0; transform: translateX(-50%) translateY(32px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0);    }
+}
+
+@keyframes ob-fade-in {
+  from { opacity: 0; transform: translateX(6px); }
+  to   { opacity: 1; transform: translateX(0);   }
+}
+
+@keyframes ob-bounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}

@@ -1,0 +1,37 @@
+// ── Green · Teal · White theme ────────────────────────────────────────────────
+:root[data-theme="green"] {
+  // ── Color tokens (RGB channels — Tailwind opacity support)
+  // Only three source colors:
+  //   Green  #22C55E → 34  197 94
+  //   Teal   #14B8A6 → 20  184 166
+  //   White  #FFFFFF → 255 255 255
+  // Dark ink is derived from teal-900 (#115E59) so it stays in-family.
+
+  --c-ink:     17 94 89;       // teal-900  — text, borders, header bg
+  --c-cream:   255 255 255;    // white     — all card / page backgrounds
+  --c-accent:  34 197 94;      // green     — today marker, active day ring
+  --c-violet:  20 184 166;     // teal      — Hebrew dates, secondary labels
+  --c-mint:    34 197 94;      // green     — CTA buttons, confirmed badges
+  --c-amber:   20 184 166;     // teal      — header title, pending badges
+  --c-crimson: 17 94 89;       // dark teal — cancel / delete (muted, not alarming)
+
+  // ── Font tokens
+  --font-display: 'Rubik';
+  --font-body:    'Rubik';
+
+  // ── Shadow tokens — soft, teal-tinted
+  --shadow-card:       0 2px 10px rgb(20 184 166 / 0.12), 0 1px 3px rgb(0 0 0 / 0.05);
+  --shadow-card-hover: 0 6px 24px rgb(20 184 166 / 0.22), 0 2px 6px rgb(0 0 0 / 0.07);
+  --shadow-btn:        0 2px 0 rgb(17 94 89 / 0.14), 0 1px 4px rgb(0 0 0 / 0.06);
+  --shadow-btn-hover:  0 4px 0 rgb(17 94 89 / 0.11), 0 3px 12px rgb(20 184 166 / 0.18);
+  --shadow-focus:      0 0 0 3px rgb(20 184 166 / 0.32);
+
+  // ── Shape tokens
+  --border-w:    1px;
+  --radius-card: 0.875rem;   // softer cards
+  --radius-btn:  2rem;       // full-pill buttons
+
+  // ── No sketch decorations
+  --sketch-deco:        0;
+  --sketch-deco-offset: 0px;
+}

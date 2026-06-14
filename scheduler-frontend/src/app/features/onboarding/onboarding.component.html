@@ -1,0 +1,28 @@
+<div class="ob-wrap" [dir]="content().btn.endsWith('→') ? 'ltr' : 'rtl'">
+
+  <!-- Arrow pointing up at the calendar -->
+  <div class="ob-arrow" aria-hidden="true">▲</div>
+
+  <div class="ob-card">
+
+    <!-- Close -->
+    <button class="ob-close" (click)="dismiss.emit()" aria-label="close">✕</button>
+
+    <!-- Title -->
+    <p class="ob-title">{{ content().title }}</p>
+
+    <!-- Tips -->
+    <ul class="ob-tips">
+      @for (tip of content().tips; track tip.icon; let i = $index) {
+        <li class="ob-tip" [style.--i]="i">
+          <span class="ob-tip-icon">{{ tip.icon }}</span>
+          <span class="ob-tip-text">{{ tip.text }}</span>
+        </li>
+      }
+    </ul>
+
+    <!-- CTA -->
+    <button class="ob-btn" (click)="dismiss.emit()">{{ content().btn }}</button>
+
+  </div>
+</div>
