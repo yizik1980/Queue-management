@@ -49,7 +49,11 @@
         class="btn-sketch bg-white/15 text-white px-2 py-1 text-xs sm:text-sm"
         (click)="themeSvc.toggle()"
       >
-        <span class="hidden sm:inline">{{ themeSvc.current() === 'sketch' ? langSvc.tr().themeSketch : langSvc.tr().themeClean }}</span>
+        <span class="hidden sm:inline">{{
+          themeSvc.current() === 'sketch' ? langSvc.tr().themeSketch :
+          themeSvc.current() === 'clean'  ? langSvc.tr().themeClean  :
+                                            langSvc.tr().themeGreen
+        }}</span>
         <span class="sm:hidden">🎨</span>
       </button>
 
@@ -207,6 +211,10 @@
 
   @if (showRegistration()) {
     <app-client-registration (registered)="onRegistered()" />
+  }
+
+  @if (showOnboarding()) {
+    <app-onboarding (dismiss)="showOnboarding.set(false)" />
   }
 
 </div>

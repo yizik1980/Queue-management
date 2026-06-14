@@ -2,7 +2,7 @@
 // Fonts
 @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600&display=swap');
 
-[data-theme="clean"] {
+:root[data-theme="clean"] {
   // ── Color tokens
   --c-ink:     15 23 42;      // slate-900
   --c-cream:   248 250 252;   // slate-50

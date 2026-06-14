@@ -2,7 +2,7 @@
 // Fonts
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Heebo:wght@300;400;600&display=swap');
 
-[data-theme="sketch"] {
+:root[data-theme="sketch"] {
   // ── Color tokens (space-separated RGB channels for Tailwind opacity support)
   --c-ink:     26 26 46;
   --c-cream:   254 249 231;

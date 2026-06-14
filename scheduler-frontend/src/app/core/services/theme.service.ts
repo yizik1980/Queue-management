@@ -1,19 +1,14 @@
 import { Injectable, signal } from '@angular/core';
 
-export type ThemeName = 'sketch' | 'clean';
+export type ThemeName = 'sketch' | 'clean' | 'green';
 
-const THEMES: ThemeName[]  = ['sketch', 'clean'];
-const STORAGE_KEY          = 'app_theme';
-const THEME_LABELS: Record<ThemeName, string> = {
-  sketch: '✏️ קריקטורה',
-  clean:  '🎯 נקי',
-};
+const THEMES: ThemeName[] = ['sketch', 'clean', 'green'];
+const STORAGE_KEY = 'app_theme';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
-  readonly themes     = THEMES;
-  readonly labels     = THEME_LABELS;
-  readonly current    = signal<ThemeName>('sketch');
+  readonly themes  = THEMES;
+  readonly current = signal<ThemeName>('sketch');
 
   apply(theme: ThemeName): void {
     document.documentElement.setAttribute('data-theme', theme);

@@ -18,6 +18,7 @@ import {
 import { AppointmentFormComponent } from '../appointment-form/appointment-form.component';
 import { ClientRegistrationComponent } from '../client-registration/client-registration.component';
 import { NotFoundComponent } from '../not-found/not-found.component';
+import { OnboardingComponent } from '../onboarding/onboarding.component';
 import { AdminCheckService } from '../../core/services/admin-check.service';
 
 interface TodaySlot {
@@ -29,7 +30,7 @@ interface TodaySlot {
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [CommonModule, RouterModule, AppointmentFormComponent, ClientRegistrationComponent, NotFoundComponent],
+  imports: [CommonModule, RouterModule, AppointmentFormComponent, ClientRegistrationComponent, NotFoundComponent, OnboardingComponent],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.scss',
 })
@@ -50,6 +51,7 @@ export class CalendarComponent implements OnInit {
   readonly monthApps = currentMonthAppointments;
 
   showRegistration = signal(false);
+  showOnboarding  = signal(false);
   adminNotFound   = signal(false);
   checkedAdminId  = signal('');
 
@@ -204,6 +206,7 @@ export class CalendarComponent implements OnInit {
 
   onRegistered(): void {
     this.showRegistration.set(false);
+    this.showOnboarding.set(true);
   }
 
   closeForm(): void { showFormSignal.set(false); }

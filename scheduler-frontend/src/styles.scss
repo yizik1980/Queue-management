@@ -1,6 +1,7 @@
 // ── Themes must be loaded before any CSS output (@use must precede all rules)
 @use './themes/sketch.theme';
 @use './themes/clean.theme';
+@use './themes/green.theme';
 
 @tailwind base;
 @tailwind components;

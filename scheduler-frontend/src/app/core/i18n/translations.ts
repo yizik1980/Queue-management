@@ -8,6 +8,7 @@ export interface Translations {
   newAppointmentBtn: string;
   themeSketch: string;
   themeClean: string;
+  themeGreen: string;
   loading: string;
   langToggle: string;
 
@@ -76,7 +77,8 @@ export const HE: Translations = {
   appTitle: 'יומן תורים',
   newAppointmentBtn: '➕ תור חדש',
   themeSketch: '✏️ קריקטורה',
-  themeClean: '🎯 נקי',
+  themeClean:  '🎯 נקי',
+  themeGreen:  '🌿 ירוק',
   loading: 'טוען...',
   langToggle: 'EN',
 
@@ -139,7 +141,8 @@ export const EN: Translations = {
   appTitle: 'Appointments',
   newAppointmentBtn: '➕ New',
   themeSketch: '✏️ Sketch',
-  themeClean: '🎯 Clean',
+  themeClean:  '🎯 Clean',
+  themeGreen:  '🌿 Green',
   loading: 'Loading...',
   langToggle: 'עב',
 
