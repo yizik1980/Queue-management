@@ -18,7 +18,7 @@ export class AppointmentsService {
   }
 
   findByDate(date: string, adminId: string): Promise<AppointmentDocument[]> {
-    return this.model.find({ date, adminId }).sort({ startTime: 1 }).lean().exec() as any;
+    return this.model.find({ adminId }).sort({ startTime: 1 }).lean().exec() as any;
   }
 
   async create(dto: CreateAppointmentDto): Promise<AppointmentDocument> {

@@ -28,11 +28,11 @@ import { MigrationService } from './migration.service';
       useFactory: (config: ConfigService) =>
         ({ uri: config.get<string>('MONGO_URI') }),
     }),
+    AuthModule,
+    AdminPanelModule,
     AppointmentsModule,
     ClientsModule,
-    AuthModule,
     SettingsModule,
-    AdminPanelModule,
   ],
   controllers: [AppController],
   providers: [

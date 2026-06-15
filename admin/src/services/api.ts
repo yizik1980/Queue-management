@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { tokenSignal, setToken } from '../signals/store';
+import { tokenSignal, setToken, adminIdSignal } from '../signals/store';
 import type { Appointment, Client, AdminStats, BusinessSettings } from '../types';
 
 const _apiRoot = import.meta.env.VITE_API_URL as string | undefined;
@@ -31,7 +31,7 @@ export const authApi = {
 // ── Admin: appointments ───────────────────────────────────────────────────────
 export const appointmentsApi = {
   getAll:  () =>
-    http.get<Appointment[]>('admin/appointments').then(r => r.data),
+    http.get<Appointment[]>('admin/appointments/'+adminIdSignal.value).then(r => r.data),
   update:  (id: string, dto: Partial<Appointment>) =>
     http.patch<Appointment>(`admin/appointments/${id}`, dto).then(r => r.data),
   remove:  (id: string) =>

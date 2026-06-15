@@ -13,16 +13,14 @@ export class AdminPanelController {
     private appointmentsSvc: AppointmentsService,
     private clientsSvc: ClientsService,
     private settingsSvc: SettingsService,
-  ) {}
+  ) { }
 
   // ── Appointments ──────────────────────────────────────────────────────
 
-  @Get('appointments')
-  getAllAppointments(@Req() req: any, @Query('date') date?: string) {
-    const adminId: string = req.user.sub;
-    return date
-      ? this.appointmentsSvc.findByDate(date, adminId)
-      : this.appointmentsSvc.findAll(adminId);
+  @Get('appointments/:adminId')
+  getAllAppointments(@Param('adminId') adminId: string) {
+    console.log('AdminPanelController.getAllAppointments', { adminId });
+    return this.appointmentsSvc.findAll(adminId);
   }
 
   @Patch('appointments/:id')
@@ -78,13 +76,13 @@ export class AdminPanelController {
     const today = new Date().toISOString().slice(0, 10);
 
     return {
-      total:     appointments.length,
-      pending:   byStatus('pending'),
+      total: appointments.length,
+      pending: byStatus('pending'),
       confirmed: byStatus('confirmed'),
       cancelled: byStatus('cancelled'),
       completed: byStatus('completed'),
-      today:     appointments.filter((a: any) => a.date === today).length,
-      clients:   clients.length,
+      today: appointments.filter((a: any) => a.date === today).length,
+      clients: clients.length,
     };
   }
 }

@@ -17,7 +17,8 @@ export default function LoginPage() {
     try {
       const { access_token } = await authApi.login(username, password);
       setToken(access_token);
-      navigate('/');
+      const payload = JSON.parse(atob(access_token.split('.')[1]));
+      navigate(`/${payload.sub}`);
     } catch (err: any) {
       setError(err.response?.data?.message ?? 'שגיאה בחיבור לשרת');
     } finally {

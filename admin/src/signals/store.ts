@@ -8,6 +8,17 @@ export const tokenSignal = signal<string | null>(localStorage.getItem(TOKEN_KEY)
 
 export const isAuthenticated = computed(() => !!tokenSignal.value);
 
+export const adminIdSignal = computed<string | null>(() => {
+  const token = tokenSignal.value;
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return (payload.sub as string) ?? null;
+  } catch {
+    return null;
+  }
+});
+
 export function setToken(token: string | null): void {
   if (token) localStorage.setItem(TOKEN_KEY, token);
   else localStorage.removeItem(TOKEN_KEY);
@@ -20,20 +31,20 @@ export function logout(): void {
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 export const appointmentsSignal = signal<Appointment[]>([]);
-export const clientsSignal      = signal<Client[]>([]);
-export const statsSignal        = signal<AdminStats | null>(null);
-export const loadingSignal      = signal(false);
-export const errorSignal        = signal<string | null>(null);
+export const clientsSignal = signal<Client[]>([]);
+export const statsSignal = signal<AdminStats | null>(null);
+export const loadingSignal = signal(false);
+export const errorSignal = signal<string | null>(null);
 
 // ── Filters ──────────────────────────────────────────────────────────────────
-export const filterDateSignal   = signal('');
+export const filterDateSignal = signal('');
 export const filterStatusSignal = signal('');
 
 export const filteredAppointments = computed(() => {
   let list = appointmentsSignal.value;
-  const date   = filterDateSignal.value;
+  const date = filterDateSignal.value;
   const status = filterStatusSignal.value;
-  if (date)   list = list.filter(a => a.date === date);
+  if (date) list = list.filter(a => a.date === date);
   if (status) list = list.filter(a => a.status === status);
   return list;
 });
