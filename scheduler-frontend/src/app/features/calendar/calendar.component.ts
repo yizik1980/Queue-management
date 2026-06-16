@@ -55,12 +55,12 @@ export class CalendarComponent implements OnInit {
   readonly monthApps = currentMonthAppointments;
   readonly settings = settingsSignal;
 
-  showRegistration   = signal(false);
-  showOnboarding     = signal(false);
-  adminNotFound      = signal(false);
-  checkedAdminId     = signal('');
-  showPopup          = signal(false);
-  showInstructions   = signal(false);
+  showRegistration = signal(false);
+  showOnboarding = signal(false);
+  adminNotFound = signal(false);
+  checkedAdminId = signal('');
+  showPopup = signal(false);
+  showInstructions = signal(false);
 
   readonly weekDays = computed(() => this.langSvc.tr().weekDays);
 
@@ -153,8 +153,8 @@ export class CalendarComponent implements OnInit {
           if (!settings) return;
           this.showPopup.set(true)
         });
-        this.langSvc.tr().tips?.map(tip => 
-          this.toastService.show(tip.text, 'success',100000, tip.icon ));
+        this.langSvc.tr().tips?.map(tip =>
+          this.toastService.show(tip.text, 'success', 100000, tip.icon));
         this.checkLocalClient();
       });
     });

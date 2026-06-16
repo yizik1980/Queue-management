@@ -70,6 +70,23 @@ export default function SettingsPage() {
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
 
+        {/* Business name */}
+        <div className="sketch-box p-5">
+          <h2 className="font-sketch text-xl text-ink mb-1">🏪 שם העסק</h2>
+          <p className="text-slate text-xs mb-3">
+            יוצג ללקוחות בכותרת לוח השנה.
+          </p>
+          <input
+            className="form-input"
+            type="text"
+            maxLength={80}
+            placeholder="לדוגמה: מספרת ישראל"
+            dir="rtl"
+            value={form.businessName ?? ''}
+            onChange={e => setForm(f => ({ ...f, businessName: e.target.value }))}
+          />
+        </div>
+
         {/* Popup message */}
         <div className="sketch-box p-5">
           <h2 className="font-sketch text-xl text-ink mb-1">💬 הודעה קופצת ללקוחות</h2>

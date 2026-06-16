@@ -20,7 +20,9 @@
   <header role="banner" class="shrink-0 flex items-center justify-between px-3 sm:px-4 py-2 bg-ink text-white">
 
     <h1 class="font-sketch text-xl sm:text-2xl font-bold text-amber m-0 leading-tight"
-        style="text-shadow:2px 2px 0 rgba(0,0,0,.4)">{{ langSvc.tr().appTitle }}</h1>
+        style="text-shadow:2px 2px 0 rgba(0,0,0,.4)">
+      {{ settings()?.businessName?.trim() }} {{ langSvc.tr().appTitle}}
+    </h1>
 
     <nav aria-label="ניווט ראשי" class="flex gap-1.5 sm:gap-2 items-center">
 
@@ -264,7 +266,7 @@
 
   @if (showPopup() && settings()?.popupMessage?.trim()) {
     <app-popup-message
-      [message]="settings()!.popupMessage!"
+      [message]="[settings()!.popupMessage!]"
       (close)="closePopup()"
     />
   }

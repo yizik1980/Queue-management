@@ -31,6 +31,7 @@ export interface BusinessSettings {
   slotDuration: number;
   breakStart: string;
   breakEnd: string;
+  businessName?: string;
   bio?: string;
   popupMessage?: string;
 }

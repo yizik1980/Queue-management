@@ -5,6 +5,7 @@ export interface BusinessSettings {
   slotDuration: number;    // minutes
   breakStart: string;
   breakEnd: string;
+  businessName?: string;
   popupMessage?: string;
 }
 

@@ -16,9 +16,9 @@
   --c-mint:    0 184 148;
   --c-amber:   253 203 110;
   --c-crimson: 214 48 49;
-
-  --font-display: 'Caveat';
-  --font-body:    'Heebo';
+  --font-display: 'Arimo';
+  --font-body:    'Arimo';
+  
 
   --shadow-card:       3px 3px 0 rgb(var(--c-ink));
   --shadow-card-hover: 4px 4px 0 rgb(var(--c-ink));
@@ -82,7 +82,7 @@
 
   .btn-sketch {
     @apply text-lg cursor-pointer transition-all select-none;
-    font-family: var(--font-display), sans-serif;
+    font-family: var(--font-display);
     border: 1.5px solid rgb(var(--c-ink) / 0.45);
     border-radius: var(--radius-btn);
     box-shadow: var(--shadow-btn);
@@ -160,15 +160,16 @@
   .day-cell {
     @apply sketch-box flex flex-col overflow-hidden p-1 cursor-pointer;
     min-height: 0;
-    transition: transform 0.1s, box-shadow 0.1s;
-    &:hover:not(.other-month) {
-      transform: translate(-1px, -1px);
-      box-shadow: var(--shadow-card-hover);
+    transition: transform 0.18s ease-out, box-shadow 0.18s ease-out, z-index 0s;
+    &:hover:not(.other-month):not(.is-past) {
+      transform: scale(1.55);
+      box-shadow: 5px 5px 0 rgb(var(--c-ink) / 0.65);
+      z-index: 20;
     }
     &:focus-visible {
       outline: 2px solid rgb(var(--c-violet));
       outline-offset: 2px;
-      z-index: 1;
+      z-index: 20;
     }
     &.other-month { @apply bg-gray-50 opacity-50 cursor-default; }
     &.is-past {
@@ -222,7 +223,7 @@
   }
   .day-cell {
     transition: none;
-    &:hover:not(.other-month) { transform: none; }
+    &:hover:not(.other-month):not(.is-past) { transform: none; }
   }
   .loader-dots > span { animation: none; opacity: 1; transform: none; }
 }

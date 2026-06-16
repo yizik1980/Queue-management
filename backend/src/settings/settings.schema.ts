@@ -20,6 +20,8 @@ export class Settings {
   @Prop({ default: '13:00' }) breakStart: string;
   @Prop({ default: '14:00' }) breakEnd: string;
 
+  @Prop({ default: '' }) businessName: string;
+
   @Prop({ default: '' }) bio: string;
 
   @Prop({ default: '' }) popupMessage: string;

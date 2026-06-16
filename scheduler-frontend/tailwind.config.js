@@ -15,8 +15,8 @@ module.exports = {
       },
       fontFamily: {
         // var(--font-display) / var(--font-body) set by each theme
-        sketch: ['var(--font-display)', 'cursive'],
-        body:   ['var(--font-body)',    'sans-serif'],
+        sketch: ['var(--font-display)'],
+        body:   ['var(--font-body)'],
       },
       boxShadow: {
         sketch:        'var(--shadow-card)',

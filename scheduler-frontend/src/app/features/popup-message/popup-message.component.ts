@@ -1,6 +1,6 @@
 import {
   Component, input, output, AfterViewInit, OnDestroy, OnInit,
-  HostListener, ElementRef, inject, viewChild,
+  HostListener, ElementRef, inject,
 } from '@angular/core';
 
 @Component({
@@ -23,9 +23,14 @@ import {
            style="box-shadow: 4px 4px 0 #1a1a2e"
            (click)="$event.stopPropagation()">
         <div class="text-3xl mb-3" aria-hidden="true">{{ icon() }}</div>
-        <p id="popup-msg-title" class="font-body text-ink text-base leading-relaxed whitespace-pre-wrap" dir="rtl">
-          {{ message() }}
-        </p>
+     
+        <div class="" >
+          @for (line of message(); track line) {
+            <p class="text-right mb-2 last:mb-0" >
+              {{ line }}
+            </p>
+          }
+        </div>
         <button
           #closeBtn
           class="btn-sketch mt-5 bg-mint text-ink px-6 py-2 text-sm"
@@ -36,9 +41,9 @@ import {
   `,
 })
 export class PopupMessageComponent implements OnInit, AfterViewInit, OnDestroy {
-  readonly message  = input.required<string>();
-  readonly icon     = input<string>('📢');
-  readonly close    = output<void>();
+  readonly message = input<string[]>([]);
+  readonly icon = input<string>('📢');
+  readonly close = output<void>();
 
   private el = inject(ElementRef<HTMLElement>);
   private previouslyFocused: HTMLElement | null = null;
