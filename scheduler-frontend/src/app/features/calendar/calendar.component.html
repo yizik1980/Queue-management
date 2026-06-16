@@ -213,8 +213,14 @@
     <app-client-registration (registered)="onRegistered()" />
   }
 
-  @if (showOnboarding()) {
-    <app-onboarding (dismiss)="showOnboarding.set(false)" />
+
+  @if (showPopup() && settings()?.popupMessage?.trim()) {
+    <app-popup-message
+      [message]="settings()!.popupMessage!"
+      (close)="closePopup()"
+    />
   }
 
 </div>
+
+<app-toast />

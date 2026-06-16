@@ -32,6 +32,7 @@ export interface BusinessSettings {
   breakStart: string;
   breakEnd: string;
   bio?: string;
+  popupMessage?: string;
 }
 
 export interface AdminStats {

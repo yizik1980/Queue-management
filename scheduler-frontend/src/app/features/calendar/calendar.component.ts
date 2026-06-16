@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, computed, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ThemeService } from '../../core/services/theme.service';
@@ -18,8 +18,10 @@ import {
 import { AppointmentFormComponent } from '../appointment-form/appointment-form.component';
 import { ClientRegistrationComponent } from '../client-registration/client-registration.component';
 import { NotFoundComponent } from '../not-found/not-found.component';
-import { OnboardingComponent } from '../onboarding/onboarding.component';
+import { PopupMessageComponent } from '../popup-message/popup-message.component';
 import { AdminCheckService } from '../../core/services/admin-check.service';
+import { ToastComponent } from "../toast/toast.component";
+import { ToastService } from "../../core/services/toast.service";
 
 interface TodaySlot {
   time: string;
@@ -30,7 +32,7 @@ interface TodaySlot {
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [CommonModule, RouterModule, AppointmentFormComponent, ClientRegistrationComponent, NotFoundComponent, OnboardingComponent],
+  imports: [CommonModule, RouterModule, AppointmentFormComponent, ClientRegistrationComponent, NotFoundComponent, PopupMessageComponent, ToastComponent],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.scss',
 })
@@ -43,17 +45,20 @@ export class CalendarComponent implements OnInit {
   readonly themeSvc = inject(ThemeService);
   readonly langSvc = inject(LanguageService);
   readonly activeRoute = inject(ActivatedRoute);
+  private readonly toastService = inject(ToastService);
 
   readonly loading = loadingSignal;
   readonly showForm = showFormSignal;
   readonly selectedDate = selectedDateSignal;
   readonly localClient = localClientSignal;
   readonly monthApps = currentMonthAppointments;
+  readonly settings = settingsSignal;
 
   showRegistration = signal(false);
-  showOnboarding  = signal(false);
-  adminNotFound   = signal(false);
-  checkedAdminId  = signal('');
+  showOnboarding = signal(false);
+  adminNotFound = signal(false);
+  checkedAdminId = signal('');
+  showPopup = signal(false);
 
   readonly weekDays = computed(() => this.langSvc.tr().weekDays);
 
@@ -142,11 +147,18 @@ export class CalendarComponent implements OnInit {
         if (!exists) { this.adminNotFound.set(true); return; }
         setAdminId(adminId);
         this.appointmentsSvc.loadAll().subscribe();
-        this.settingsSvc.load().subscribe();
+        this.settingsSvc.load().subscribe((settings) => {
+          if (!settings) return;
+          this.showPopup.set(true)
+        });
+        this.langSvc.tr().tips?.map(tip => 
+          this.toastService.show(tip.text, 'success',100000, tip.icon ));
         this.checkLocalClient();
       });
     });
   }
+
+  closePopup(): void { this.showPopup.set(false); }
 
   private async checkLocalClient(): Promise<void> {
     const client = await this.localClientSvc.loadOrNull();

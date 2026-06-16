@@ -1,20 +1,20 @@
-import { Outlet, NavLink, useNavigate, useParams } from 'react-router-dom';
-import { useState, useEffect, useRef } from 'react';
-import { logout } from '../signals/store';
-import { settingsApi } from '../services/api';
+import { Outlet, NavLink, useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { logout } from "../signals/store";
+import { settingsApi } from "../services/api";
 
 export default function Layout() {
   const navigate = useNavigate();
   const { adminId } = useParams<{ adminId: string }>();
 
-  const [bio, setBio]         = useState('');
+  const [bio, setBio] = useState("");
   const [editing, setEditing] = useState(false);
-  const [draft, setDraft]     = useState('');
-  const [saving, setSaving]   = useState(false);
-  const textareaRef           = useRef<HTMLTextAreaElement>(null);
+  const [draft, setDraft] = useState("");
+  const [saving, setSaving] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    settingsApi.get().then(s => setBio(s.bio ?? ''));
+    settingsApi.get().then((s) => setBio(s.bio ?? ""));
   }, []);
 
   function startEdit() {
@@ -39,15 +39,15 @@ export default function Layout() {
   }
 
   const navItems = [
-    { to: `/${adminId}`,              label: 'דשבורד',   icon: '📊', end: true },
-    { to: `/${adminId}/appointments`, label: 'תורים',    icon: '📅', end: false },
-    { to: `/${adminId}/clients`,      label: 'לקוחות',   icon: '👥', end: false },
-    { to: `/${adminId}/settings`,     label: 'הגדרות',   icon: '⚙️', end: false },
+    { to: `/${adminId}`, label: "דשבורד", icon: "📊", end: true },
+    { to: `/${adminId}/appointments`, label: "תורים", icon: "📅", end: false },
+    { to: `/${adminId}/clients`, label: "לקוחות", icon: "👥", end: false },
+    { to: `/${adminId}/settings`, label: "הגדרות", icon: "⚙️", end: false },
   ];
 
   function handleLogout() {
     logout();
-    navigate('/login');
+    navigate("/login");
   }
 
   return (
@@ -57,7 +57,9 @@ export default function Layout() {
         {/* Logo */}
         <div className="px-2 mb-3 text-center">
           <div className="text-4xl mb-1">✂️</div>
-          <h1 className="font-sketch text-2xl text-amber leading-tight">מנהל תורים</h1>
+          <h1 className="font-sketch text-2xl text-amber leading-tight">
+            מנהל תורים
+          </h1>
           <span className="text-white/40 text-xs">Admin Panel</span>
         </div>
 
@@ -68,7 +70,7 @@ export default function Layout() {
               <textarea
                 ref={textareaRef}
                 value={draft}
-                onChange={e => setDraft(e.target.value)}
+                onChange={(e) => setDraft(e.target.value)}
                 rows={3}
                 maxLength={200}
                 placeholder="כמה מילים על העסק שלך..."
@@ -87,7 +89,7 @@ export default function Layout() {
                   disabled={saving}
                   className="text-amber hover:text-amber/80 text-xs font-medium transition-colors"
                 >
-                  {saving ? '...' : 'שמור'}
+                  {saving ? "..." : "שמור"}
                 </button>
               </div>
             </div>
@@ -105,7 +107,7 @@ export default function Layout() {
                 onClick={startEdit}
                 dir="rtl"
               >
-                {bio || 'הוסף תיאור קצר על העסק שלך...'}
+                {bio || "הוסף תיאור קצר על העסק שלך..."}
               </p>
             </div>
           )}
@@ -119,7 +121,7 @@ export default function Layout() {
               to={to}
               end={end}
               className={({ isActive }) =>
-                `nav-link ${isActive ? 'active' : ''}`
+                `nav-link ${isActive ? "active" : ""}`
               }
             >
               <span className="text-lg">{icon}</span>
@@ -137,7 +139,6 @@ export default function Layout() {
           יציאה
         </button>
       </aside>
-
 
       <main className="flex-1 min-w-0 overflow-y-auto bg-gray-50 p-6">
         <Outlet />

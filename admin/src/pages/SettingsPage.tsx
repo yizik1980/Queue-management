@@ -70,6 +70,26 @@ export default function SettingsPage() {
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
 
+        {/* Popup message */}
+        <div className="sketch-box p-5">
+          <h2 className="font-sketch text-xl text-ink mb-1">💬 הודעה קופצת ללקוחות</h2>
+          <p className="text-slate text-xs mb-3">
+            ההודעה תוצג ללקוחות כחלון קופץ אחת לכמה דקות. השאר ריק כדי לא להציג הודעה.
+          </p>
+          <textarea
+            className="form-input resize-none w-full"
+            rows={3}
+            maxLength={300}
+            placeholder="לדוגמה: שימו לב — מחר סגור בשל חג!"
+            dir="rtl"
+            value={form.popupMessage ?? ''}
+            onChange={e => setForm(f => ({ ...f, popupMessage: e.target.value }))}
+          />
+          <div className="text-xs text-slate text-left mt-1">
+            {(form.popupMessage ?? '').length} / 300
+          </div>
+        </div>
+
         {/* Working days */}
         <div className="sketch-box p-5">
           <h2 className="font-sketch text-xl text-ink mb-3">📅 ימי עבודה</h2>

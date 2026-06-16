@@ -5,6 +5,7 @@ export interface BusinessSettings {
   slotDuration: number;    // minutes
   breakStart: string;
   breakEnd: string;
+  popupMessage?: string;
 }
 
 export function generateTimeSlots(settings: BusinessSettings, dateStr: string): string[] {

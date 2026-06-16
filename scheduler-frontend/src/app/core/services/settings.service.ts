@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs';
+import { map, tap } from 'rxjs';
 import { BusinessSettings } from '../models/settings.model';
 import { settingsSignal, adminIdSignal } from '../store/app.store';
 import { environment } from '../../../environments/environment';
@@ -12,7 +12,7 @@ export class SettingsService {
 
   load() {
     return this.http.get<BusinessSettings>(this.api).pipe(
-      tap(s => settingsSignal.set(s))
+      map(s => {settingsSignal.set(s); return s; })
     );
   }
 }

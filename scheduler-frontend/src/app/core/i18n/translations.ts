@@ -2,7 +2,7 @@ export type Lang = 'he' | 'en';
 
 export interface Translations {
   dir: 'rtl' | 'ltr';
-
+  tips?: { icon: string; text: string }[];
   // Header
   appTitle: string;
   newAppointmentBtn: string;
@@ -134,6 +134,9 @@ export const HE: Translations = {
   registrationError: 'שגיאה בהרשמה — בדוק חיבור לשרת ונסה שנית.',
   registeringText: '⏳ רושם...',
   registerBtn: '✅ הרשמה וקביעת תור',
+   tips: [
+    { icon: '📅', text: 'לחץ על יום בלוח — כל ריבוע הוא הזמנה שמחכה לך' }
+  ]
 };
 
 export const EN: Translations = {
@@ -198,6 +201,8 @@ export const EN: Translations = {
   registrationError: 'Registration error — check your connection and try again.',
   registeringText: '⏳ Registering...',
   registerBtn: '✅ Register & Book',
+    tips: [
+    { icon: '📅', text: 'Tap any day on the calendar — each square is an invitation' }  ]
 };
 
 export const TRANSLATIONS: Record<Lang, Translations> = { he: HE, en: EN };

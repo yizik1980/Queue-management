@@ -21,6 +21,8 @@ export class Settings {
   @Prop({ default: '14:00' }) breakEnd: string;
 
   @Prop({ default: '' }) bio: string;
+
+  @Prop({ default: '' }) popupMessage: string;
 }
 
 export const SettingsSchema = SchemaFactory.createForClass(Settings);
