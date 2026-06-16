@@ -26,14 +26,18 @@ export class AppointmentsService {
     return created.save();
   }
 
-  async update(id: string, dto: Partial<CreateAppointmentDto>, adminId: string): Promise<AppointmentDocument> {
-    const doc = await this.model.findOneAndUpdate({ _id: id, adminId }, dto, { new: true }).exec();
+  async update(id: string, dto: Partial<CreateAppointmentDto>, adminId: string, clientId?: string): Promise<AppointmentDocument> {
+    const filter: Record<string, unknown> = { _id: id, adminId };
+    if (clientId) filter['clientId'] = clientId;
+    const doc = await this.model.findOneAndUpdate(filter, dto, { new: true }).exec();
     if (!doc) throw new NotFoundException(`Appointment ${id} not found`);
     return doc;
   }
 
-  async remove(id: string, adminId: string): Promise<void> {
-    const doc = await this.model.findOneAndDelete({ _id: id, adminId }).exec();
+  async remove(id: string, adminId: string, clientId?: string): Promise<void> {
+    const filter: Record<string, unknown> = { _id: id, adminId };
+    if (clientId) filter['clientId'] = clientId;
+    const doc = await this.model.findOneAndDelete(filter).exec();
     if (!doc) throw new NotFoundException(`Appointment ${id} not found`);
   }
 

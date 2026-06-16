@@ -213,6 +213,8 @@ export class CalendarComponent implements OnInit {
 
   editAppointment(a: any, event: Event): void {
     event.stopPropagation();
+    const lc = localClientSignal();
+    if (lc && a.clientId !== lc._id) return;
     selectedAppointmentSignal.set(a);
     showFormSignal.set(true);
   }

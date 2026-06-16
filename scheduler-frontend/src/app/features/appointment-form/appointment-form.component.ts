@@ -193,10 +193,13 @@ export class AppointmentFormComponent implements OnInit, AfterViewInit, OnDestro
     if (!this.form.clientId || !this.form.date || !this.form.service || !this.form.startTime) return;
     if (this.limitReached()) return;
 
-    if (localClientSignal()) this.form.status = 'pending';
+    const lc = localClientSignal();
+    const existing = selectedAppointmentSignal();
+    if (lc && existing && existing.clientId !== lc._id) return;
+
+    if (lc) this.form.status = 'pending';
 
     this.saving.set(true);
-    const existing = selectedAppointmentSignal();
     const obs = existing?._id
       ? this.svc.update(existing._id, this.form)
       : this.svc.create(this.form as Omit<Appointment, '_id'>);
@@ -211,8 +214,11 @@ export class AppointmentFormComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   delete(): void {
-    const id = selectedAppointmentSignal()?._id;
+    const existing = selectedAppointmentSignal();
+    const id = existing?._id;
     if (!id) return;
+    const lc = localClientSignal();
+    if (lc && existing.clientId !== lc._id) return;
     this.deleting.set(true);
     this.svc.delete(id).subscribe({ next: () => { this.deleting.set(false); this.close.emit(); } });
   }

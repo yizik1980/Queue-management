@@ -23,12 +23,17 @@ export class AppointmentsController {
     @Param('adminId') adminId: string,
     @Param('id') id: string,
     @Body() dto: Partial<CreateAppointmentDto>,
+    @Query('clientId') clientId?: string,
   ) {
-    return this.svc.update(id, dto, adminId);
+    return this.svc.update(id, dto, adminId, clientId);
   }
 
   @Delete(':id')
-  remove(@Param('adminId') adminId: string, @Param('id') id: string) {
-    return this.svc.remove(id, adminId);
+  remove(
+    @Param('adminId') adminId: string,
+    @Param('id') id: string,
+    @Query('clientId') clientId?: string,
+  ) {
+    return this.svc.remove(id, adminId, clientId);
   }
 }

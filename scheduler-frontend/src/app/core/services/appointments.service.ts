@@ -4,7 +4,7 @@ import { Observable, tap } from 'rxjs';
 import { Appointment } from '../models/appointment.model';
 import {
   appointmentsSignal, addAppointment, updateAppointment, removeAppointment, loadingSignal,
-  adminIdSignal,
+  adminIdSignal, localClientSignal,
 } from '../store/app.store';
 import { environment } from '../../../environments/environment';
 
@@ -27,13 +27,17 @@ export class AppointmentsService {
   }
 
   update(id: string, dto: Partial<Appointment>): Observable<Appointment> {
-    return this.http.patch<Appointment>(`${this.api}/${id}`, dto).pipe(
+    const clientId = localClientSignal()?._id;
+    const params = clientId ? { clientId } : undefined;
+    return this.http.patch<Appointment>(`${this.api}/${id}`, dto, { params }).pipe(
       tap(a => updateAppointment(a))
     );
   }
 
   delete(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.api}/${id}`).pipe(
+    const clientId = localClientSignal()?._id;
+    const params = clientId ? { clientId } : undefined;
+    return this.http.delete<void>(`${this.api}/${id}`, { params }).pipe(
       tap(() => removeAppointment(id))
     );
   }
