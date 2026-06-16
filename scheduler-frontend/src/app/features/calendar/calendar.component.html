@@ -38,6 +38,13 @@
         </div>
       }
 
+      <!-- Help / how-to -->
+      <button
+        class="btn-sketch bg-white/15 text-white px-2 py-1 text-xs sm:text-sm font-bold"
+        (click)="showInstructions.set(true)"
+        aria-label="הוראות לקביעת תור"
+      >{{ langSvc.tr().howToBtn }}</button>
+
       <!-- Language toggle -->
       <button
         class="btn-sketch bg-white/15 text-white px-2 py-1 text-xs sm:text-sm font-mono"
@@ -206,7 +213,7 @@
             </div>
 
             <div class="flex flex-col gap-[2px] flex-1 min-h-0 overflow-hidden">
-              @for (apt of day.appointments.slice(0, 2); track apt._id) {
+              @for (apt of day.appointments; track apt._id) {
                 <div
                   class="apt-chip"
                   role="button"
@@ -259,6 +266,14 @@
     <app-popup-message
       [message]="settings()!.popupMessage!"
       (close)="closePopup()"
+    />
+  }
+
+  @if (showInstructions()) {
+    <app-popup-message
+      icon="📋"
+      [message]="langSvc.tr().howToMessage"
+      (close)="showInstructions.set(false)"
     />
   }
 

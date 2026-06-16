@@ -56,6 +56,10 @@ export interface Translations {
   statusCancelled: string;
   statusCompleted: string;
 
+  // Help / instructions
+  howToBtn: string;
+  howToMessage: string;
+
   // Client registration
   welcomeTitle: string;
   welcomeSubtitle: string;
@@ -120,6 +124,15 @@ export const HE: Translations = {
   statusConfirmed: 'מאושר',
   statusCancelled: 'בוטל',
   statusCompleted: 'הושלם',
+
+  howToBtn: 'הוראות',
+  howToMessage:
+    '📋 איך לקבוע תור?\n\n' +
+    '1️⃣  לחץ על יום בלוח השנה\n' +
+    '2️⃣  בחר שעה פנויה מהרשימה\n' +
+    '3️⃣  מלא את סוג השירות\n' +
+    '4️⃣  לחץ ✅ שמור\n\n' +
+    '💡 תוכל לקבוע עד 2 תורים פעילים בו-זמנית.',
 
   welcomeTitle: 'ברוך הבא!',
   welcomeSubtitle: 'הרשמה מהירה לקביעת תורים',
@@ -187,6 +200,15 @@ export const EN: Translations = {
   statusConfirmed: 'Confirmed',
   statusCancelled: 'Cancelled',
   statusCompleted: 'Completed',
+
+  howToBtn: '?',
+  howToMessage:
+    '📋 How to book an appointment?\n\n' +
+    '1️⃣  Click on a day in the calendar\n' +
+    '2️⃣  Choose an available time slot\n' +
+    '3️⃣  Fill in the service type\n' +
+    '4️⃣  Click ✅ Save\n\n' +
+    '💡 You can have up to 2 active appointments at a time.',
 
   welcomeTitle: 'Welcome!',
   welcomeSubtitle: 'Quick registration to book appointments',

@@ -55,11 +55,12 @@ export class CalendarComponent implements OnInit {
   readonly monthApps = currentMonthAppointments;
   readonly settings = settingsSignal;
 
-  showRegistration = signal(false);
-  showOnboarding = signal(false);
-  adminNotFound = signal(false);
-  checkedAdminId = signal('');
-  showPopup = signal(false);
+  showRegistration   = signal(false);
+  showOnboarding     = signal(false);
+  adminNotFound      = signal(false);
+  checkedAdminId     = signal('');
+  showPopup          = signal(false);
+  showInstructions   = signal(false);
 
   readonly weekDays = computed(() => this.langSvc.tr().weekDays);
 
