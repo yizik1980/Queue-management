@@ -6,8 +6,8 @@
 <div class="h-screen overflow-hidden flex flex-col bg-cream font-body"
      [class.invisible]="adminNotFound()">
 
-  <!-- SVG sketch wobble filter -->
-  <svg width="0" height="0" class="absolute pointer-events-none">
+  <!-- SVG sketch wobble filter — decorative only -->
+  <svg width="0" height="0" class="absolute pointer-events-none" aria-hidden="true">
     <defs>
       <filter id="sketch">
         <feTurbulence type="turbulence" baseFrequency="0.03" numOctaves="2" result="noise" seed="5"/>
@@ -17,21 +17,22 @@
   </svg>
 
   <!-- ── Header ─────────────────────────────────────────────────────────── -->
-  <header class="shrink-0 flex items-center justify-between px-3 sm:px-4 py-2 bg-ink text-white">
+  <header role="banner" class="shrink-0 flex items-center justify-between px-3 sm:px-4 py-2 bg-ink text-white">
 
     <h1 class="font-sketch text-xl sm:text-2xl font-bold text-amber m-0 leading-tight"
         style="text-shadow:2px 2px 0 rgba(0,0,0,.4)">{{ langSvc.tr().appTitle }}</h1>
 
-    <nav class="flex gap-1.5 sm:gap-2 items-center">
+    <nav aria-label="ניווט ראשי" class="flex gap-1.5 sm:gap-2 items-center">
 
       <!-- Logged-in client avatar -->
       @if (localClient()) {
         <div class="flex items-center gap-1.5 ps-1 pe-2 py-0.5 rounded-full bg-white/10 border border-white/20">
           <div
+            aria-hidden="true"
             class="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0 border border-white/40"
             [style.background]="localClient()!.color"
           >{{ localClient()!.name.charAt(0) }}</div>
-          <span class="hidden sm:block text-xs text-white/90 font-semibold max-w-[100px] truncate leading-none">
+          <span class="text-xs text-white/90 font-semibold max-w-[100px] truncate leading-none">
             {{ localClient()!.name }}
           </span>
         </div>
@@ -41,168 +42,209 @@
       <button
         class="btn-sketch bg-white/15 text-white px-2 py-1 text-xs sm:text-sm font-mono"
         (click)="langSvc.toggle()"
-        [title]="langSvc.tr().langToggle"
+        [attr.aria-label]="langSvc.tr().langToggle"
       >{{ langSvc.tr().langToggle }}</button>
 
       <!-- Theme toggle -->
       <button
         class="btn-sketch bg-white/15 text-white px-2 py-1 text-xs sm:text-sm"
         (click)="themeSvc.toggle()"
+        aria-label="החלפת ערכת נושא"
       >
-        <span class="hidden sm:inline">{{
+        <span class="hidden sm:inline" aria-hidden="true">{{
           themeSvc.current() === 'sketch' ? langSvc.tr().themeSketch :
           themeSvc.current() === 'clean'  ? langSvc.tr().themeClean  :
                                             langSvc.tr().themeGreen
         }}</span>
-        <span class="sm:hidden">🎨</span>
+        <span class="sm:hidden" aria-hidden="true">🎨</span>
       </button>
 
       <!-- New appointment -->
       <button
-        class="btn-sketch bg-mint text-white px-2 sm:px-3 py-1 text-sm sm:text-base"
+        class="btn-sketch bg-mint text-ink px-2 sm:px-3 py-1 text-sm sm:text-base"
         (click)="openNewAppointment()"
+        aria-label="תור חדש"
       >
-        <span class="hidden sm:inline">{{ langSvc.tr().newAppointmentBtn }}</span>
-        <span class="sm:hidden">➕</span>
+        <span class="hidden sm:inline" aria-hidden="true">{{ langSvc.tr().newAppointmentBtn }}</span>
+        <span class="sm:hidden" aria-hidden="true">➕</span>
       </button>
 
     </nav>
   </header>
 
   <!-- ── Month navigation — desktop only ──────────────────────────────── -->
-  <div
+  <nav
+    aria-label="ניווט חודש"
     class="shrink-0 hidden md:flex items-center justify-between px-4 py-1.5 bg-white border-b border-ink/20"
     [class.flex-row-reverse]="!langSvc.isRTL()"
   >
     <button class="btn-sketch bg-amber px-3 py-1 text-xl font-bold min-w-[36px]"
+            aria-label="חודש הבא"
             (click)="nextMonth()">→</button>
     <div class="text-center">
-      <span class="block font-sketch text-xl font-bold text-ink leading-tight">{{ monthTitle() }}</span>
-      <span class="block text-[0.7rem] font-semibold text-violet leading-tight">{{ hebrewMonthTitle() }}</span>
+      <h2 class="m-0 leading-tight">
+        <span class="block font-sketch text-xl font-bold text-ink leading-tight">{{ monthTitle() }}</span>
+        <span class="block text-[0.7rem] font-semibold text-violet leading-tight">{{ hebrewMonthTitle() }}</span>
+      </h2>
     </div>
     <button class="btn-sketch bg-amber px-3 py-1 text-xl font-bold min-w-[36px]"
+            aria-label="חודש קודם"
             (click)="prevMonth()">←</button>
-  </div>
+  </nav>
 
-  <!-- ── Mobile: Today's schedule ──────────────────────────────────────── -->
-  <div class="flex md:hidden flex-col flex-1 min-h-0">
+  <!-- ── Main content ─────────────────────────────────────────────────── -->
+  <main id="main-content" class="flex flex-1 min-h-0 flex-col md:flex-row">
 
-    <!-- Today header -->
-    <div class="shrink-0 px-4 pt-3 pb-2 border-b border-gray-100">
-      <p class="font-sketch font-bold text-base text-ink leading-tight">{{ todayGregorianLabel() }}</p>
-      <p class="text-xs text-violet/70 mt-0.5">{{ todayHebrewFull() }}</p>
+    <!-- ── Mobile: Today's schedule ────────────────────────────────────── -->
+    <div class="flex md:hidden flex-col flex-1 min-h-0">
+
+      <!-- Today header -->
+      <div class="shrink-0 px-4 pt-3 pb-2 border-b border-gray-100">
+        <p class="font-sketch font-bold text-base text-ink leading-tight">{{ todayGregorianLabel() }}</p>
+        <p class="text-xs text-violet/70 mt-0.5">{{ todayHebrewFull() }}</p>
+      </div>
+
+      <!-- Slots list -->
+      <div
+        class="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-2"
+        aria-live="polite"
+        aria-label="שעות פנויות היום"
+      >
+        @if (todaySlotList().length === 0) {
+          <p class="text-center text-gray-400 text-sm mt-10">{{ langSvc.tr().noWorkingHours }}</p>
+        }
+        @for (slot of todaySlotList(); track slot.time) {
+          <div
+            class="slot-row flex items-center gap-3 rounded-xl px-3 py-2.5 border transition-colors"
+            [class.slot-past]="slot.isPast && !slot.appointment"
+            [class.slot-free]="!slot.isPast && !slot.appointment"
+            [class.slot-booked]="!!slot.appointment"
+            [style.border-color]="slot.appointment ? slot.appointment.color : null"
+            [style.background]="slot.appointment ? slot.appointment.color + '18' : null"
+            [attr.tabindex]="slot.isPast ? null : 0"
+            [attr.role]="slot.isPast ? null : 'button'"
+            [attr.aria-label]="slot.appointment
+              ? slot.time + ' – ' + slot.appointment.clientName + ', ' + slot.appointment.service
+              : slot.isPast ? slot.time + ' – עבר'
+              : slot.time + ' – פנוי, לחץ לקביעת תור'"
+            (click)="slot.appointment ? editAppointment(slot.appointment, $event) : selectSlotMobile(slot.time)"
+            (keydown.enter)="slot.appointment ? editAppointment(slot.appointment, $event) : selectSlotMobile(slot.time)"
+            (keydown.space)="$event.preventDefault(); slot.appointment ? editAppointment(slot.appointment, $event) : selectSlotMobile(slot.time)"
+          >
+            <span class="text-xs font-mono font-bold text-gray-400 shrink-0 w-10 text-right tabular-nums" aria-hidden="true">{{ slot.time }}</span>
+            <div class="w-px h-4 bg-gray-200 shrink-0" aria-hidden="true"></div>
+            @if (slot.appointment) {
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-ink truncate leading-tight">{{ slot.appointment.clientName }}</p>
+                <p class="text-xs text-gray-500 truncate leading-tight">{{ slot.appointment.service }}</p>
+              </div>
+              <div class="w-2 h-2 rounded-full shrink-0" aria-hidden="true" [style.background]="slot.appointment.color"></div>
+            } @else if (!slot.isPast) {
+              <span class="text-xs text-gray-400 flex-1" aria-hidden="true">{{ langSvc.tr().free }}</span>
+              <span class="text-gray-300 text-sm leading-none" aria-hidden="true">＋</span>
+            } @else {
+              <span class="text-xs text-gray-300 flex-1" aria-hidden="true">—</span>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Add button -->
+      <div class="shrink-0 px-4 pb-4 pt-2">
+        <button class="btn-sketch w-full bg-mint text-ink py-2 text-sm" (click)="openNewAppointment()">
+          {{ langSvc.tr().newAppointmentBtn }}
+        </button>
+      </div>
+
     </div>
 
-    <!-- Slots list -->
-    <div class="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-2">
-      @if (todaySlotList().length === 0) {
-        <p class="text-center text-gray-400 text-sm mt-10">{{ langSvc.tr().noWorkingHours }}</p>
-      }
-      @for (slot of todaySlotList(); track slot.time) {
-        <div
-          class="slot-row flex items-center gap-3 rounded-xl px-3 py-2.5 border transition-colors"
-          [class.slot-past]="slot.isPast && !slot.appointment"
-          [class.slot-free]="!slot.isPast && !slot.appointment"
-          [class.slot-booked]="!!slot.appointment"
-          [style.border-color]="slot.appointment ? slot.appointment.color : null"
-          [style.background]="slot.appointment ? slot.appointment.color + '18' : null"
-          (click)="slot.appointment ? editAppointment(slot.appointment, $event) : selectSlotMobile(slot.time)"
-        >
-          <span class="text-xs font-mono font-bold text-gray-400 shrink-0 w-10 text-right tabular-nums">{{ slot.time }}</span>
-          <div class="w-px h-4 bg-gray-200 shrink-0"></div>
-          @if (slot.appointment) {
-            <div class="flex-1 min-w-0">
-              <p class="text-sm font-semibold text-ink truncate leading-tight">{{ slot.appointment.clientName }}</p>
-              <p class="text-xs text-gray-500 truncate leading-tight">{{ slot.appointment.service }}</p>
+    <!-- ── Desktop: Calendar grid ───────────────────────────────────────── -->
+    <div class="hidden md:flex flex-1 min-h-0 flex-col p-4 gap-[3px]">
+
+      <!-- Weekday headers -->
+      <div class="shrink-0 grid grid-cols-7 gap-[3px]" role="row">
+        @for (day of weekDays(); track day) {
+          <div
+            class="text-center font-sketch text-xs font-bold py-1 bg-ink text-amber rounded-sm"
+            role="columnheader"
+          >{{ day }}</div>
+        }
+      </div>
+
+      <!-- Days grid -->
+      <div
+        role="grid"
+        [attr.aria-label]="monthTitle()"
+        class="flex-1 min-h-0 grid grid-cols-7 gap-[3px]"
+        [style.grid-template-rows]="gridRows()"
+      >
+        @for (day of calendarDays(); track day.dateStr) {
+          <div
+            class="day-cell !p-1"
+            role="gridcell"
+            [class.other-month]="!day.isCurrentMonth"
+            [class.is-today]="day.isToday"
+            [class.is-past]="day.isPast && day.isCurrentMonth"
+            [attr.tabindex]="day.isCurrentMonth && !day.isPast ? 0 : null"
+            [attr.aria-label]="day.gregorianLabel + ' ' + day.hebrewLabel + (day.appointments.length ? ', ' + day.appointments.length + ' תורים' : '') + (day.isToday ? ', היום' : '')"
+            [attr.aria-disabled]="!day.isCurrentMonth || day.isPast || null"
+            (click)="selectDay(day)"
+            (keydown.enter)="selectDay(day)"
+            (keydown.space)="$event.preventDefault(); selectDay(day)"
+          >
+            <div class="flex justify-between items-start shrink-0 mb-0.5">
+              <span
+                class="gregorian-day-num font-sketch font-bold text-base leading-none
+                       w-[22px] h-[22px] flex items-center justify-center rounded-full shrink-0"
+                [class.bg-accent]="day.isToday"
+                [class.text-white]="day.isToday"
+                aria-hidden="true"
+              >{{ day.gregorianLabel }}</span>
+              <span class="text-[0.55rem] font-semibold text-violet leading-tight text-end" aria-hidden="true">
+                {{ day.hebrewLabel }}
+              </span>
             </div>
-            <div class="w-2 h-2 rounded-full shrink-0" [style.background]="slot.appointment.color"></div>
-          } @else if (!slot.isPast) {
-            <span class="text-xs text-gray-400 flex-1">{{ langSvc.tr().free }}</span>
-            <span class="text-gray-300 text-sm leading-none">＋</span>
-          } @else {
-            <span class="text-xs text-gray-300 flex-1">—</span>
-          }
-        </div>
-      }
-    </div>
 
-    <!-- Add button -->
-    <div class="shrink-0 px-4 pb-4 pt-2">
-      <button class="btn-sketch w-full bg-mint text-white py-2 text-sm" (click)="openNewAppointment()">
-        {{ langSvc.tr().newAppointmentBtn }}
-      </button>
-    </div>
+            <div class="flex flex-col gap-[2px] flex-1 min-h-0 overflow-hidden">
+              @for (apt of day.appointments.slice(0, 2); track apt._id) {
+                <div
+                  class="apt-chip"
+                  role="button"
+                  tabindex="0"
+                  [style.background-color]="apt.color + '33'"
+                  [style.border-color]="apt.color"
+                  (click)="editAppointment(apt, $event)"
+                  (keydown.enter)="editAppointment(apt, $event)"
+                  (keydown.space)="$event.preventDefault(); editAppointment(apt, $event)"
+                  [attr.aria-label]="apt.startTime + ' – ' + apt.service + ', ' + apt.clientName"
+                >
+                  <span class="apt-time" aria-hidden="true">{{ apt.startTime }}</span>
+                  <span class="apt-name" aria-hidden="true">{{ apt.service }}</span>
+                  <span
+                    aria-hidden="true"
+                    class="shrink-0 w-3.5 h-3.5 rounded-full flex items-center justify-center text-[0.45rem] font-bold text-white leading-none"
+                    [style.background]="apt.color"
+                  >{{ apt.clientName.charAt(0) }}</span>
+                </div>
+              }
+              @if (day.appointments.length > 2) {
+                <div class="text-[0.6rem] text-violet text-center italic leading-tight" aria-hidden="true">
+                  +{{ day.appointments.length - 2 }}
+                </div>
+              }
+            </div>
 
-  </div>
-
-  <!-- ── Desktop: Calendar grid ─────────────────────────────────────────── -->
-  <div class="hidden md:flex flex-1 min-h-0 flex-col p-4 gap-[3px]">
-
-    <!-- Weekday headers -->
-    <div class="shrink-0 grid grid-cols-7 gap-[3px]">
-      @for (day of weekDays(); track day) {
-        <div class="text-center font-sketch text-xs font-bold py-1 bg-ink text-amber rounded-sm">
-          {{ day }}
-        </div>
-      }
-    </div>
-
-    <!-- Days grid -->
-    <div
-      class="flex-1 min-h-0 grid grid-cols-7 gap-[3px]"
-      [style.grid-template-rows]="gridRows()"
-    >
-      @for (day of calendarDays(); track day.dateStr) {
-        <div
-          class="day-cell !p-1"
-          [class.other-month]="!day.isCurrentMonth"
-          [class.is-today]="day.isToday"
-          [class.is-past]="day.isPast && day.isCurrentMonth"
-          (click)="selectDay(day)"
-        >
-          <div class="flex justify-between items-start shrink-0 mb-0.5">
-            <span
-              class="gregorian-day-num font-sketch font-bold text-base leading-none
-                     w-[22px] h-[22px] flex items-center justify-center rounded-full shrink-0"
-              [class.bg-accent]="day.isToday"
-              [class.text-white]="day.isToday"
-            >{{ day.gregorianLabel }}</span>
-            <span class="text-[0.55rem] font-semibold text-violet leading-tight text-end">
-              {{ day.hebrewLabel }}
-            </span>
           </div>
+        }
+      </div>
 
-          <div class="flex flex-col gap-[2px] flex-1 min-h-0 overflow-hidden">
-            @for (apt of day.appointments.slice(0, 2); track apt._id) {
-              <div
-                class="apt-chip"
-                [style.background-color]="apt.color + '33'"
-                [style.border-color]="apt.color"
-                (click)="editAppointment(apt, $event)"
-                [title]="apt.clientName + ' | ' + apt.service + ' ' + apt.startTime"
-              >
-                <span class="apt-time">{{ apt.startTime }}</span>
-                <span class="apt-name">{{ apt.service }}</span>
-              </div>
-            }
-            @if (day.appointments.length > 2) {
-              <div class="text-[0.6rem] text-violet text-center italic leading-tight">
-                +{{ day.appointments.length - 2 }}
-              </div>
-            }
-          </div>
-
-        </div>
-      }
     </div>
 
-  </div>
+  </main>
 
-  <!-- ── Modals ─────────────────────────────────────────────────────────── -->
+  <!-- ── Modals & overlays ─────────────────────────────────────────────── -->
   @if (loading()) {
-    <div class="fixed bottom-4 end-4 z-50 bg-amber border-2 border-ink rounded px-3 py-1.5 font-sketch text-sm shadow-sketch">
-      {{ langSvc.tr().loading }}
-    </div>
+    <app-loader [label]="langSvc.tr().loading" />
   }
 
   @if (showForm()) {
@@ -212,7 +254,6 @@
   @if (showRegistration()) {
     <app-client-registration (registered)="onRegistered()" />
   }
-
 
   @if (showPopup() && settings()?.popupMessage?.trim()) {
     <app-popup-message

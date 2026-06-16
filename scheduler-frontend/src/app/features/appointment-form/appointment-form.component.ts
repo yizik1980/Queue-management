@@ -1,4 +1,8 @@
-import { Component, OnInit, Output, EventEmitter, inject, signal, computed } from '@angular/core';
+import {
+  Component, OnInit, OnDestroy, AfterViewInit,
+  Output, EventEmitter, HostListener, ElementRef,
+  inject, signal, computed,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Appointment, AppointmentStatus } from '../../core/models/appointment.model';
@@ -17,6 +21,8 @@ const APPOINTMENT_COLORS = [
   '#e17055', '#a29bfe', '#55efc4', '#fab1a0', '#74b9ff',
 ];
 
+const FOCUSABLE = 'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea, [tabindex="0"]';
+
 @Component({
   selector: 'app-appointment-form',
   standalone: true,
@@ -24,12 +30,15 @@ const APPOINTMENT_COLORS = [
   templateUrl: './appointment-form.component.html',
   styleUrl: './appointment-form.component.scss',
 })
-export class AppointmentFormComponent implements OnInit {
+export class AppointmentFormComponent implements OnInit, AfterViewInit, OnDestroy {
   @Output() close = new EventEmitter<void>();
 
-  private svc       = inject(AppointmentsService);
-  private hebrewSvc = inject(HebrewDateService);
-  readonly langSvc  = inject(LanguageService);
+  private svc        = inject(AppointmentsService);
+  private hebrewSvc  = inject(HebrewDateService);
+  private el         = inject(ElementRef<HTMLElement>);
+  readonly langSvc   = inject(LanguageService);
+
+  private previouslyFocused: HTMLElement | null = null;
 
   readonly clients     = clientsSignal;
   readonly localClient = localClientSignal;
@@ -86,8 +95,9 @@ export class AppointmentFormComponent implements OnInit {
     { value: 'completed', label: this.langSvc.tr().statusCompleted },
   ]);
 
-  saving    = signal(false);
-  deleting  = signal(false);
+  saving           = signal(false);
+  deleting         = signal(false);
+  confirmingDelete = signal(false);
   private formDate = signal('');
 
   form: Partial<Appointment> & { clientId: string } = {
@@ -100,6 +110,8 @@ export class AppointmentFormComponent implements OnInit {
   hebrewDateLabel = signal('');
 
   ngOnInit(): void {
+    this.previouslyFocused = document.activeElement as HTMLElement;
+
     const existing = selectedAppointmentSignal();
     if (existing) {
       this.form = { ...existing };
@@ -118,6 +130,35 @@ export class AppointmentFormComponent implements OnInit {
     this.formDate.set(this.form.date ?? '');
     this.updateHebrewLabel();
   }
+
+  ngAfterViewInit(): void {
+    const first = (this.el.nativeElement as HTMLElement).querySelector(FOCUSABLE) as HTMLElement | null;
+    first?.focus();
+  }
+
+  ngOnDestroy(): void {
+    this.previouslyFocused?.focus();
+  }
+
+  // Focus trap — keep keyboard navigation inside the dialog
+  @HostListener('document:keydown.tab', ['$event'])
+  onTab(e: Event): void {
+    const ke = e as KeyboardEvent;
+    const nodes = Array.from(
+      (this.el.nativeElement as HTMLElement).querySelectorAll(FOCUSABLE)
+    ) as HTMLElement[];
+    if (!nodes.length) return;
+    const first = nodes[0];
+    const last  = nodes[nodes.length - 1];
+    if (ke.shiftKey && document.activeElement === first) {
+      ke.preventDefault(); last.focus();
+    } else if (!ke.shiftKey && document.activeElement === last) {
+      ke.preventDefault(); first.focus();
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void { this.close.emit(); }
 
   onClientChange(): void {
     const c = this.clients().find(c => c._id === this.form.clientId);
@@ -172,7 +213,6 @@ export class AppointmentFormComponent implements OnInit {
   delete(): void {
     const id = selectedAppointmentSignal()?._id;
     if (!id) return;
-    if (!confirm(this.langSvc.tr().deleteConfirm)) return;
     this.deleting.set(true);
     this.svc.delete(id).subscribe({ next: () => { this.deleting.set(false); this.close.emit(); } });
   }

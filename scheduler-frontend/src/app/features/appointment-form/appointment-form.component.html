@@ -3,19 +3,28 @@
   class="fixed inset-0 bg-ink/55 flex items-center justify-center z-[1000] p-4"
   style="backdrop-filter:blur(2px)"
   (click)="close.emit()"
+  aria-hidden="true"
+></div>
+
+<!-- Modal box -->
+<div
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="apt-form-title"
+  class="fixed inset-0 flex items-center justify-center z-[1001] p-4 pointer-events-none"
 >
-  <!-- Modal box -->
   <div
-    class="sketch-box w-full max-w-[520px] max-h-[90vh] overflow-y-auto rounded-lg !bg-cream"
+    class="sketch-box w-full max-w-[520px] max-h-[90vh] overflow-y-auto rounded-lg !bg-cream pointer-events-auto"
     (click)="$event.stopPropagation()"
   >
     <!-- Header -->
     <div class="flex items-center justify-between px-5 py-4 border-b-2 border-ink !bg-ink rounded-t-md">
-      <h2 class="font-sketch text-2xl text-amber m-0">
+      <h2 id="apt-form-title" class="font-sketch text-2xl text-amber m-0">
         {{ editing() ? langSvc.tr().editTitle : langSvc.tr().newTitle }}
       </h2>
       <button
-        class="bg-transparent border-none text-white text-xl cursor-pointer px-2 py-1 rounded hover:bg-white/15"
+        class="bg-transparent border-none text-white text-xl cursor-pointer px-2 py-1 rounded hover:bg-white/15 focus-visible:outline-white"
+        aria-label="סגור"
         (click)="close.emit()"
       >✕</button>
     </div>
@@ -25,8 +34,11 @@
 
       <!-- Limit reached warning -->
       @if (limitReached()) {
-        <div class="bg-crimson/15 border-2 border-crimson/50 rounded-md px-4 py-3 text-center">
-          <div class="text-2xl mb-1">🚫</div>
+        <div
+          role="alert"
+          class="bg-crimson/15 border-2 border-crimson/50 rounded-md px-4 py-3 text-center"
+        >
+          <div class="text-2xl mb-1" aria-hidden="true">🚫</div>
           <p class="font-sketch text-lg text-crimson font-bold m-0">{{ langSvc.tr().limitTitle }}</p>
           <p class="text-sm text-crimson/80 mt-1 mb-0">{{ langSvc.tr().limitBody }}</p>
         </div>
@@ -34,11 +46,14 @@
 
       <!-- Client field -->
       <div>
-        <label class="form-label">{{ langSvc.tr().clientLabel }}</label>
+        <label class="form-label" for="apt-client">{{ langSvc.tr().clientLabel }}</label>
         @if (localClient()) {
-          <div class="flex items-center gap-2 px-3 py-2 border-2 border-ink rounded bg-white"
-               style="box-shadow:2px 2px 0 #1a1a2e">
-            <span class="w-3 h-3 rounded-full border border-ink shrink-0"
+          <div
+            id="apt-client"
+            class="flex items-center gap-2 px-3 py-2 border-2 border-ink rounded bg-white"
+            style="box-shadow:2px 2px 0 #1a1a2e"
+          >
+            <span aria-hidden="true" class="w-3 h-3 rounded-full border border-ink shrink-0"
                   [style.background]="localClient()!.color"></span>
             <span class="font-semibold text-sm flex-1">{{ localClient()!.name }}</span>
             <span class="text-xs text-gray-400">{{ localClient()!.phone }}</span>
@@ -46,11 +61,13 @@
           </div>
         } @else if (clients().length > 0) {
           <select
+            id="apt-client"
             class="form-input"
             [(ngModel)]="form.clientId"
             name="clientId"
             (change)="onClientChange()"
             required
+            aria-required="true"
           >
             <option value="">{{ langSvc.tr().selectClient }}</option>
             @for (c of clients(); track c._id) {
@@ -66,25 +83,27 @@
 
       <!-- Date -->
       <div>
-        <label class="form-label">{{ langSvc.tr().dateLabel }}</label>
+        <label class="form-label" for="apt-date">{{ langSvc.tr().dateLabel }}</label>
         <input
+          id="apt-date"
           class="form-input"
           type="date"
           [(ngModel)]="form.date"
           name="date"
           [min]="today"
           required
+          aria-required="true"
           (change)="onDateChange()"
         />
         @if (hebrewDateLabel()) {
-          <span class="block text-xs font-semibold text-violet mt-1">{{ hebrewDateLabel() }}</span>
+          <span class="block text-xs font-semibold text-violet mt-1" aria-live="polite">{{ hebrewDateLabel() }}</span>
         }
       </div>
 
       <!-- Time slot picker -->
       @if (form.date) {
         <div>
-          <label class="form-label">{{ langSvc.tr().timeLabel }}</label>
+          <label class="form-label" id="apt-time-label">{{ langSvc.tr().timeLabel }}</label>
 
           @if (!isWorkingDay()) {
             <div class="bg-amber/20 border border-amber/60 rounded-md px-4 py-3 text-center text-sm text-amber-800">
@@ -95,7 +114,7 @@
               {{ langSvc.tr().noAvailability }}
             </div>
           } @else {
-            <div class="grid grid-cols-4 gap-1.5">
+            <div class="grid grid-cols-4 gap-1.5" role="group" aria-labelledby="apt-time-label">
               @for (slot of allSlots(); track slot) {
                 @let booked = bookedSlots().has(slot);
                 @let selected = form.startTime === slot;
@@ -103,20 +122,22 @@
                   type="button"
                   class="btn-sketch font-mono text-sm py-1.5 transition-colors"
                   [class.!bg-mint]="selected && !booked"
-                  [class.!text-white]="selected && !booked"
+                  [class.!text-ink]="selected && !booked"
                   [class.!border-mint]="selected && !booked"
                   [class.bg-gray-100]="booked"
                   [class.text-gray-400]="booked"
                   [class.line-through]="booked"
                   [class.cursor-not-allowed]="booked"
                   [disabled]="booked"
+                  [attr.aria-pressed]="selected && !booked"
+                  [attr.aria-label]="slot + (booked ? ' – תפוס' : selected ? ' – נבחר' : ' – פנוי')"
                   (click)="selectSlot(slot)"
                 >{{ slot }}</button>
               }
             </div>
             @if (form.startTime) {
-              <p class="text-xs text-violet mt-2 font-semibold">
-                ✅ {{ langSvc.tr().selectedTimePrefix }}: {{ form.startTime }}–{{ form.endTime }}
+              <p class="text-xs text-violet mt-2 font-semibold" aria-live="polite">
+                <span aria-hidden="true">✅</span> {{ langSvc.tr().selectedTimePrefix }}: {{ form.startTime }}–{{ form.endTime }}
               </p>
             }
           }
@@ -125,28 +146,32 @@
 
       <!-- Service -->
       <div>
-        <label class="form-label">{{ langSvc.tr().serviceLabel }}</label>
+        <label class="form-label" for="apt-service">{{ langSvc.tr().serviceLabel }}</label>
         <input
+          id="apt-service"
           class="form-input"
           type="text"
           [(ngModel)]="form.service"
           name="service"
           [placeholder]="langSvc.tr().servicePlaceholder"
           required
+          aria-required="true"
         />
       </div>
 
       <!-- Status buttons — admin mode only -->
       @if (!localClient()) {
         <div>
-          <label class="form-label">{{ langSvc.tr().statusLabel }}</label>
-          <div class="flex flex-wrap gap-2">
+          <label class="form-label" id="apt-status-label">{{ langSvc.tr().statusLabel }}</label>
+          <div class="flex flex-wrap gap-2" role="group" aria-labelledby="apt-status-label">
             @for (s of statuses(); track s.value) {
               <button
                 type="button"
                 class="btn-sketch text-base px-3 py-1.5"
                 [style.background-color]="form.status === s.value ? statusBtnColor(s.value) : '#fff'"
-                [style.color]="form.status === s.value && s.value === 'confirmed' ? '#fff' : '#1a1a2e'"
+                [style.color]="'#1a1a2e'"
+                [attr.aria-pressed]="form.status === s.value"
+                [attr.aria-label]="s.label"
                 (click)="form.status = s.value"
               >{{ s.label }}</button>
             }
@@ -156,24 +181,28 @@
 
       <!-- Color swatches -->
       <div>
-        <label class="form-label">{{ langSvc.tr().colorLabel }}</label>
-        <div class="flex flex-wrap gap-2">
+        <label class="form-label" id="apt-color-label">{{ langSvc.tr().colorLabel }}</label>
+        <div class="flex flex-wrap gap-2" role="group" aria-labelledby="apt-color-label">
           @for (c of colors; track c) {
-            <div
-              class="w-7 h-7 rounded-full cursor-pointer border-2 border-transparent shadow-sketch-sm transition-transform hover:scale-110"
+            <button
+              type="button"
+              class="w-7 h-7 rounded-full cursor-pointer border-2 border-transparent shadow-sketch-sm transition-transform hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2"
               [style.background]="c"
               [class.!border-ink]="form.color === c"
               [class.scale-125]="form.color === c"
+              [attr.aria-pressed]="form.color === c"
+              [attr.aria-label]="'צבע ' + c + (form.color === c ? ' – נבחר' : '')"
               (click)="form.color = c"
-            ></div>
+            ></button>
           }
         </div>
       </div>
 
       <!-- Notes -->
       <div>
-        <label class="form-label">{{ langSvc.tr().notesLabel }}</label>
+        <label class="form-label" for="apt-notes">{{ langSvc.tr().notesLabel }}</label>
         <textarea
+          id="apt-notes"
           class="form-input resize-y min-h-[64px]"
           [(ngModel)]="form.notes"
           name="notes"
@@ -185,17 +214,33 @@
       <!-- Actions -->
       <div class="flex gap-2 justify-end pt-3 border-t-2 border-ink">
         @if (editing()) {
-          <button
-            type="button"
-            class="btn-sketch bg-crimson/25 text-crimson px-4 py-2 me-auto"
-            (click)="delete()"
-            [disabled]="deleting()"
-          >{{ deleting() ? langSvc.tr().deletingText : langSvc.tr().deleteBtn }}</button>
+          @if (confirmingDelete()) {
+            <button
+              type="button"
+              role="alert"
+              class="btn-sketch bg-crimson text-white px-4 py-2 me-auto"
+              (click)="delete()"
+              [disabled]="deleting()"
+            >{{ deleting() ? langSvc.tr().deletingText : langSvc.tr().deleteBtn + ' – אני בטוח' }}</button>
+            <button
+              type="button"
+              class="btn-sketch bg-cream px-4 py-2 me-2"
+              (click)="confirmingDelete.set(false)"
+            >ביטול</button>
+          } @else {
+            <button
+              type="button"
+              class="btn-sketch bg-crimson/25 text-crimson px-4 py-2 me-auto"
+              (click)="confirmingDelete.set(true)"
+              [disabled]="deleting()"
+              aria-label="מחיקת תור – ידרש אישור"
+            >{{ langSvc.tr().deleteBtn }}</button>
+          }
         }
         <button type="button" class="btn-sketch bg-cream px-4 py-2" (click)="close.emit()">{{ langSvc.tr().cancelBtn }}</button>
         <button
           type="submit"
-          class="btn-sketch bg-mint text-white px-4 py-2"
+          class="btn-sketch bg-mint text-ink px-4 py-2"
           [disabled]="saving() || !form.clientId || !form.date || !form.service || !form.startTime || limitReached()"
         >{{ saving() ? langSvc.tr().savingText : (editing() ? langSvc.tr().updateBtn : langSvc.tr().saveBtn) }}</button>
       </div>

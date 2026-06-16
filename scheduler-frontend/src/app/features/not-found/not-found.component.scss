@@ -220,3 +220,13 @@
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0);    }
 }
+
+// ── Respect user's motion preference (WCAG 2.3.3 AAA) ────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .nf-float, .nf-blob,
+  .nf-card, .nf-num-row, .nf-digit,
+  .nf-title, .nf-desc, .nf-eyebrow, .nf-id-tag, .nf-btn {
+    animation: none !important;
+    transition: none !important;
+  }
+}

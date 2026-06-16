@@ -22,6 +22,7 @@ import { PopupMessageComponent } from '../popup-message/popup-message.component'
 import { AdminCheckService } from '../../core/services/admin-check.service';
 import { ToastComponent } from "../toast/toast.component";
 import { ToastService } from "../../core/services/toast.service";
+import { LoaderComponent } from "../loader/loader.component";
 
 interface TodaySlot {
   time: string;
@@ -32,7 +33,7 @@ interface TodaySlot {
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [CommonModule, RouterModule, AppointmentFormComponent, ClientRegistrationComponent, NotFoundComponent, PopupMessageComponent, ToastComponent],
+  imports: [CommonModule, RouterModule, AppointmentFormComponent, ClientRegistrationComponent, NotFoundComponent, PopupMessageComponent, ToastComponent, LoaderComponent],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.scss',
 })

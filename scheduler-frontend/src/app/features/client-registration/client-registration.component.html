@@ -1,13 +1,21 @@
-<!-- Full-screen backdrop (non-dismissible — must register) -->
+<!-- Full-screen backdrop -->
 <div class="fixed inset-0 bg-ink/70 flex items-center justify-center z-[2000] p-4"
-     style="backdrop-filter:blur(4px)">
+     style="backdrop-filter:blur(4px)"
+     aria-hidden="true"></div>
 
-  <div class="sketch-box w-full max-w-[420px] !bg-cream overflow-hidden">
+<!-- Dialog -->
+<div
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="reg-title"
+  class="fixed inset-0 flex items-center justify-center z-[2001] p-4 pointer-events-none"
+>
+  <div class="sketch-box w-full max-w-[420px] !bg-cream overflow-hidden pointer-events-auto">
 
     <!-- Header -->
     <div class="bg-ink px-6 py-4 text-center rounded-t-md">
-      <div class="text-5xl mb-2">📅</div>
-      <h2 class="font-sketch text-2xl font-bold text-amber m-0">{{ langSvc.tr().welcomeTitle }}</h2>
+      <div class="text-5xl mb-2" aria-hidden="true">📅</div>
+      <h2 id="reg-title" class="font-sketch text-2xl font-bold text-amber m-0">{{ langSvc.tr().welcomeTitle }}</h2>
       <p class="text-white/70 text-sm mt-1 mb-0">{{ langSvc.tr().welcomeSubtitle }}</p>
     </div>
 
@@ -15,57 +23,71 @@
     <form (ngSubmit)="submit()" class="flex flex-col gap-4 p-6">
 
       <div>
-        <label class="form-label">{{ langSvc.tr().fullNameLabel }}</label>
+        <label class="form-label" for="reg-name">{{ langSvc.tr().fullNameLabel }}</label>
         <input
+          id="reg-name"
           class="form-input"
           type="text"
           [(ngModel)]="form.name"
           name="name"
           [placeholder]="langSvc.tr().fullNamePlaceholder"
           required
+          aria-required="true"
           autofocus
         />
       </div>
 
       <div>
-        <label class="form-label">{{ langSvc.tr().phoneLabel }}</label>
+        <label class="form-label" for="reg-phone">{{ langSvc.tr().phoneLabel }}</label>
         <input
+          id="reg-phone"
           class="form-input"
           type="tel"
           [(ngModel)]="form.phone"
           name="phone"
           [placeholder]="langSvc.tr().phonePlaceholder"
           required
+          aria-required="true"
         />
       </div>
 
       <div>
-        <label class="form-label">{{ langSvc.tr().emailLabel }} <span class="text-gray-400 font-normal">{{ langSvc.tr().emailOptional }}</span></label>
+        <label class="form-label" for="reg-email">
+          {{ langSvc.tr().emailLabel }}
+          <span class="text-gray-400 font-normal">{{ langSvc.tr().emailOptional }}</span>
+        </label>
         <input
+          id="reg-email"
           class="form-input"
           type="email"
           [(ngModel)]="form.email"
           name="email"
           placeholder="you@email.com"
+          aria-describedby="reg-email-hint"
         />
+        <span id="reg-email-hint" class="sr-only">{{ langSvc.tr().emailOptional }}</span>
       </div>
 
       <!-- Error -->
       @if (error()) {
-        <div class="bg-crimson/15 border border-crimson/40 text-crimson text-sm rounded px-3 py-2">
-          ⚠️ {{ error() }}
+        <div
+          role="alert"
+          class="bg-crimson/15 border border-crimson/40 text-crimson text-sm rounded px-3 py-2"
+        >
+          <span aria-hidden="true">⚠️</span> {{ error() }}
         </div>
       }
 
       <!-- Info note -->
       <div class="text-xs text-gray-500 bg-amber/15 border border-amber/30 rounded px-3 py-2">
-        💡 <span [innerHTML]="langSvc.tr().privacyNote"></span><br/>
+        <span aria-hidden="true">💡</span>
+        <span [innerHTML]="langSvc.tr().privacyNote"></span><br/>
         <span [innerHTML]="langSvc.tr().appointmentLimit"></span>
       </div>
 
       <button
         type="submit"
-        class="btn-sketch bg-mint text-white text-lg px-6 py-2.5 w-full"
+        class="btn-sketch bg-mint text-ink text-lg px-6 py-2.5 w-full"
         [disabled]="saving() || !form.name.trim() || !form.phone.trim()"
       >
         {{ saving() ? langSvc.tr().registeringText : langSvc.tr().registerBtn }}
