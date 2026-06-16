@@ -1,33 +1,35 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { settingsApi } from '../services/api';
-import type { BusinessSettings } from '../types';
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { settingsApi } from "../services/api";
+import type { BusinessSettings } from "../types";
 
-const DAY_NAMES = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+const DAY_NAMES = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
 const SLOT_DURATIONS = [15, 20, 30, 45, 60, 90];
 
 const DEFAULT: BusinessSettings = {
   workingDays: [0, 1, 2, 3, 4],
-  startTime:   '09:00',
-  endTime:     '18:00',
+  startTime: "09:00",
+  endTime: "18:00",
   slotDuration: 30,
-  breakStart:  '13:00',
-  breakEnd:    '14:00',
+  breakStart: "13:00",
+  breakEnd: "14:00",
 };
 
 export default function SettingsPage() {
   const { adminId } = useParams<{ adminId: string }>();
-  const [form,    setForm]    = useState<BusinessSettings>(DEFAULT);
+  const [form, setForm] = useState<BusinessSettings>(DEFAULT);
   const [loading, setLoading] = useState(true);
-  const [saving,  setSaving]  = useState(false);
-  const [saved,   setSaved]   = useState(false);
-  const [copied,  setCopied]  = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [copied, setCopied] = useState(false);
 
-  const _frontendRoot = (import.meta.env.VITE_FRONTEND_URL as string | undefined)?.replace(/\/$/, '');
-  const frontendRoot  = _frontendRoot ?? window.location.origin;
-  const bookingUrl    = `${frontendRoot}/${adminId}`;
-  const waText        = encodeURIComponent(`לקביעת תור לחץ כאן:\n${bookingUrl}`);
-  const waLink        = `https://wa.me/?text=${waText}`;
+  const _frontendRoot = (
+    import.meta.env.VITE_FRONTEND_URL as string | undefined
+  )?.replace(/\/$/, "");
+  const frontendRoot = _frontendRoot ?? window.location.origin;
+  const bookingUrl = `${frontendRoot}/${adminId}`;
+  const waText = encodeURIComponent(`לקביעת תור לחץ כאן:\n${bookingUrl}`);
+  const waLink = `https://wa.me/?text=${waText}`;
 
   function copyLink() {
     navigator.clipboard.writeText(bookingUrl).then(() => {
@@ -37,16 +39,17 @@ export default function SettingsPage() {
   }
 
   useEffect(() => {
-    settingsApi.get()
-      .then(s => setForm(s))
+    settingsApi
+      .get()
+      .then((s) => setForm(s))
       .finally(() => setLoading(false));
   }, []);
 
   function toggleDay(day: number) {
-    setForm(f => ({
+    setForm((f) => ({
       ...f,
       workingDays: f.workingDays.includes(day)
-        ? f.workingDays.filter(d => d !== day)
+        ? f.workingDays.filter((d) => d !== day)
         : [...f.workingDays, day].sort(),
     }));
   }
@@ -78,17 +81,20 @@ export default function SettingsPage() {
   return (
     <div className="flex flex-col gap-6 max-w-2xl">
       <div>
-        <h1 className="font-sketch text-3xl font-bold text-ink">⚙️ הגדרות עסק</h1>
+        <h1 className="font-sketch text-3xl font-bold text-ink">
+          ⚙️ הגדרות עסק
+        </h1>
         <p className="text-slate text-sm mt-0.5">
           הגדר את ימי וזמני הפעילות — הלקוחות יראו רק את השעות הזמינות
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-
         {/* Booking link share */}
         <div className="sketch-box p-5">
-          <h2 className="font-sketch text-xl text-ink mb-1">🔗 לינק לקביעת תור</h2>
+          <h2 className="font-sketch text-xl text-ink mb-1">
+            🔗 לינק לקביעת תור
+          </h2>
           <p className="text-slate text-xs mb-3">
             שלח ללקוחות שלך — הם יפתחו ישירות את יומן התורים שלך.
           </p>
@@ -98,14 +104,14 @@ export default function SettingsPage() {
               dir="ltr"
               value={bookingUrl}
               className="form-input text-xs flex-1 bg-gray-50 cursor-text select-all"
-              onFocus={e => e.currentTarget.select()}
+              onFocus={(e) => e.currentTarget.select()}
             />
             <button
               type="button"
               onClick={copyLink}
               className="btn px-3 py-2 text-sm shrink-0 bg-white text-slate border-ink/30 hover:bg-gray-50 transition-colors"
             >
-              {copied ? '✅ הועתק' : '📋 העתק'}
+              {copied ? "✅ הועתק" : "📋 העתק"}
             </button>
           </div>
           <a
@@ -131,16 +137,21 @@ export default function SettingsPage() {
             maxLength={80}
             placeholder="לדוגמה: מספרת ישראל"
             dir="rtl"
-            value={form.businessName ?? ''}
-            onChange={e => setForm(f => ({ ...f, businessName: e.target.value }))}
+            value={form.businessName ?? ""}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, businessName: e.target.value }))
+            }
           />
         </div>
 
         {/* Popup message */}
         <div className="sketch-box p-5">
-          <h2 className="font-sketch text-xl text-ink mb-1">💬 הודעה קופצת ללקוחות</h2>
+          <h2 className="font-sketch text-xl text-ink mb-1">
+            💬 הודעה קופצת ללקוחות
+          </h2>
           <p className="text-slate text-xs mb-3">
-            ההודעה תוצג ללקוחות כחלון קופץ אחת לכמה דקות. השאר ריק כדי לא להציג הודעה.
+            ההודעה תוצג ללקוחות כחלון קופץ אחת לכמה דקות. השאר ריק כדי לא להציג
+            הודעה.
           </p>
           <textarea
             className="form-input resize-none w-full"
@@ -148,11 +159,13 @@ export default function SettingsPage() {
             maxLength={300}
             placeholder="לדוגמה: שימו לב — מחר סגור בשל חג!"
             dir="rtl"
-            value={form.popupMessage ?? ''}
-            onChange={e => setForm(f => ({ ...f, popupMessage: e.target.value }))}
+            value={form.popupMessage ?? ""}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, popupMessage: e.target.value }))
+            }
           />
           <div className="text-xs text-slate text-left mt-1">
-            {(form.popupMessage ?? '').length} / 300
+            {(form.popupMessage ?? "").length} / 300
           </div>
         </div>
 
@@ -167,8 +180,8 @@ export default function SettingsPage() {
                 onClick={() => toggleDay(i)}
                 className={`btn px-4 py-2 text-sm transition-colors ${
                   form.workingDays.includes(i)
-                    ? 'bg-mint text-white border-mint'
-                    : 'bg-white text-slate'
+                    ? "bg-mint text-white border-mint"
+                    : "bg-white text-slate"
                 }`}
               >
                 {name}
@@ -187,7 +200,9 @@ export default function SettingsPage() {
                 className="form-input"
                 type="time"
                 value={form.startTime}
-                onChange={e => setForm(f => ({ ...f, startTime: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, startTime: e.target.value }))
+                }
               />
             </div>
             <div>
@@ -196,7 +211,9 @@ export default function SettingsPage() {
                 className="form-input"
                 type="time"
                 value={form.endTime}
-                onChange={e => setForm(f => ({ ...f, endTime: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, endTime: e.target.value }))
+                }
               />
             </div>
           </div>
@@ -212,7 +229,9 @@ export default function SettingsPage() {
                 className="form-input"
                 type="time"
                 value={form.breakStart}
-                onChange={e => setForm(f => ({ ...f, breakStart: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, breakStart: e.target.value }))
+                }
               />
             </div>
             <div>
@@ -221,7 +240,9 @@ export default function SettingsPage() {
                 className="form-input"
                 type="time"
                 value={form.breakEnd}
-                onChange={e => setForm(f => ({ ...f, breakEnd: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, breakEnd: e.target.value }))
+                }
               />
             </div>
           </div>
@@ -231,15 +252,15 @@ export default function SettingsPage() {
         <div className="sketch-box p-5">
           <h2 className="font-sketch text-xl text-ink mb-3">⏱️ משך כל תור</h2>
           <div className="flex flex-wrap gap-2">
-            {SLOT_DURATIONS.map(d => (
+            {SLOT_DURATIONS.map((d) => (
               <button
                 key={d}
                 type="button"
-                onClick={() => setForm(f => ({ ...f, slotDuration: d }))}
+                onClick={() => setForm((f) => ({ ...f, slotDuration: d }))}
                 className={`btn px-4 py-2 text-sm ${
                   form.slotDuration === d
-                    ? 'bg-violet text-white border-violet'
-                    : 'bg-white text-slate'
+                    ? "bg-violet text-white border-violet"
+                    : "bg-white text-slate"
                 }`}
               >
                 {d} דק׳
@@ -255,10 +276,11 @@ export default function SettingsPage() {
               👁️ תצוגה מקדימה — {previewSlots.length} משבצות ביום
             </h2>
             <div className="flex flex-wrap gap-1.5">
-              {previewSlots.map(s => (
-                <span key={s}
+              {previewSlots.map((s) => (
+                <span
+                  key={s}
                   className="font-mono text-xs px-2.5 py-1 rounded border-2 border-ink bg-white"
-                  style={{ boxShadow: '1px 1px 0 #1a1a2e' }}
+                  style={{ boxShadow: "1px 1px 0 #1a1a2e" }}
                 >
                   {s}
                 </span>
@@ -274,32 +296,37 @@ export default function SettingsPage() {
             disabled={saving}
             className="btn bg-mint text-white px-6 py-2.5 text-base"
           >
-            {saving ? '⏳ שומר...' : '💾 שמור הגדרות'}
+            {saving ? "⏳ שומר..." : "💾 שמור הגדרות"}
           </button>
           {saved && (
             <span className="text-mint font-sketch text-lg">✅ נשמר!</span>
           )}
         </div>
-
       </form>
     </div>
   );
 }
 
 function generatePreview(s: BusinessSettings): string[] {
-  const toMin = (t: string) => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
+  const toMin = (t: string) => {
+    const [h, m] = t.split(":").map(Number);
+    return h * 60 + m;
+  };
   const toStr = (n: number) =>
-    `${String(Math.floor(n / 60)).padStart(2, '0')}:${String(n % 60).padStart(2, '0')}`;
+    `${String(Math.floor(n / 60)).padStart(2, "0")}:${String(n % 60).padStart(2, "0")}`;
 
   const start = toMin(s.startTime);
-  const end   = toMin(s.endTime);
-  const bkS   = toMin(s.breakStart);
-  const bkE   = toMin(s.breakEnd);
+  const end = toMin(s.endTime);
+  const bkS = toMin(s.breakStart);
+  const bkE = toMin(s.breakEnd);
   const slots: string[] = [];
   let cur = start;
 
   while (cur + s.slotDuration <= end) {
-    if (cur >= bkS && cur < bkE) { cur = bkE; continue; }
+    if (cur >= bkS && cur < bkE) {
+      cur = bkE;
+      continue;
+    }
     slots.push(toStr(cur));
     cur += s.slotDuration;
   }

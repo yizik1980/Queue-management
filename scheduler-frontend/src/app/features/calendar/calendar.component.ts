@@ -23,6 +23,7 @@ import { AdminCheckService } from '../../core/services/admin-check.service';
 import { ToastComponent } from "../toast/toast.component";
 import { ToastService } from "../../core/services/toast.service";
 import { LoaderComponent } from "../loader/loader.component";
+import { MiniCalendarComponent, MiniCalendarDay } from "../mini-calendar/mini-calendar.component";
 
 interface TodaySlot {
   time: string;
@@ -33,7 +34,7 @@ interface TodaySlot {
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [CommonModule, RouterModule, AppointmentFormComponent, ClientRegistrationComponent, NotFoundComponent, PopupMessageComponent, ToastComponent, LoaderComponent],
+  imports: [CommonModule, RouterModule, AppointmentFormComponent, ClientRegistrationComponent, NotFoundComponent, PopupMessageComponent, ToastComponent, LoaderComponent, MiniCalendarComponent],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.scss',
 })
@@ -61,8 +62,40 @@ export class CalendarComponent implements OnInit {
   checkedAdminId = signal('');
   showPopup = signal(false);
   showInstructions = signal(false);
+  showMobilePicker = signal(false);
+  mobileDate       = signal(new Date());
 
   readonly weekDays = computed(() => this.langSvc.tr().weekDays);
+
+  readonly mobileDateStr = computed(() => this.toDateStr(this.mobileDate()));
+
+  readonly isMobileDateToday = computed(() => this.mobileDateStr() === this.todayStr());
+
+  readonly mobileDateGregorianLabel = computed(() => {
+    const d = this.mobileDate();
+    const t = this.langSvc.tr();
+    return t.formatTodayLabel(t.dayNames[d.getDay()], d.getDate(), t.months[d.getMonth()]);
+  });
+
+  readonly mobileDateHebrewFull = computed(() =>
+    this.hebrewSvc.toHebrewDate(this.mobileDate()).fullLabel
+  );
+
+  readonly mobileSlotList = computed<TodaySlot[]>(() => {
+    const s = settingsSignal();
+    if (!s) return [];
+    const dateStr = this.mobileDateStr();
+    const nowMin = this.isMobileDateToday()
+      ? new Date().getHours() * 60 + new Date().getMinutes() : -1;
+    const aptMap = new Map<string, Appointment>();
+    for (const a of appointmentsSignal().filter(a => a.date === dateStr)) {
+      aptMap.set(a.startTime, a);
+    }
+    return generateAllTimeSlots(s).map(time => {
+      const [h, m] = time.split(':').map(Number);
+      return { time, appointment: aptMap.get(time) ?? null, isPast: h * 60 + m < nowMin };
+    });
+  });
 
   readonly todayStr = computed(() => {
     const now = new Date();
@@ -202,10 +235,17 @@ export class CalendarComponent implements OnInit {
   }
 
   selectSlotMobile(_time: string): void {
-    selectedDateSignal.set(this.todayStr());
+    selectedDateSignal.set(this.mobileDateStr());
     selectedAppointmentSignal.set(null);
     showFormSignal.set(true);
   }
+
+  selectMobileDay(day: MiniCalendarDay): void {
+    if (!day.isCurrentMonth || day.isPast) return;
+    this.mobileDate.set(day.date);
+    this.showMobilePicker.set(false);
+  }
+
 
   openNewAppointment(): void {
     selectedAppointmentSignal.set(null);
@@ -264,9 +304,9 @@ export class CalendarComponent implements OnInit {
     lines.push('END:VCALENDAR');
 
     const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
-    const url  = URL.createObjectURL(blob);
-    const el   = document.createElement('a');
-    el.href     = url;
+    const url = URL.createObjectURL(blob);
+    const el = document.createElement('a');
+    el.href = url;
     el.download = 'תורים.ics';
     el.click();
     URL.revokeObjectURL(url);
