@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { settingsApi } from '../services/api';
 import type { BusinessSettings } from '../types';
 
@@ -15,10 +16,25 @@ const DEFAULT: BusinessSettings = {
 };
 
 export default function SettingsPage() {
+  const { adminId } = useParams<{ adminId: string }>();
   const [form,    setForm]    = useState<BusinessSettings>(DEFAULT);
   const [loading, setLoading] = useState(true);
   const [saving,  setSaving]  = useState(false);
   const [saved,   setSaved]   = useState(false);
+  const [copied,  setCopied]  = useState(false);
+
+  const _frontendRoot = (import.meta.env.VITE_FRONTEND_URL as string | undefined)?.replace(/\/$/, '');
+  const frontendRoot  = _frontendRoot ?? window.location.origin;
+  const bookingUrl    = `${frontendRoot}/${adminId}`;
+  const waText        = encodeURIComponent(`לקביעת תור לחץ כאן:\n${bookingUrl}`);
+  const waLink        = `https://wa.me/?text=${waText}`;
+
+  function copyLink() {
+    navigator.clipboard.writeText(bookingUrl).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    });
+  }
 
   useEffect(() => {
     settingsApi.get()
@@ -69,6 +85,39 @@ export default function SettingsPage() {
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+
+        {/* Booking link share */}
+        <div className="sketch-box p-5">
+          <h2 className="font-sketch text-xl text-ink mb-1">🔗 לינק לקביעת תור</h2>
+          <p className="text-slate text-xs mb-3">
+            שלח ללקוחות שלך — הם יפתחו ישירות את יומן התורים שלך.
+          </p>
+          <div className="flex gap-2 items-center">
+            <input
+              readOnly
+              dir="ltr"
+              value={bookingUrl}
+              className="form-input text-xs flex-1 bg-gray-50 cursor-text select-all"
+              onFocus={e => e.currentTarget.select()}
+            />
+            <button
+              type="button"
+              onClick={copyLink}
+              className="btn px-3 py-2 text-sm shrink-0 bg-white text-slate border-ink/30 hover:bg-gray-50 transition-colors"
+            >
+              {copied ? '✅ הועתק' : '📋 העתק'}
+            </button>
+          </div>
+          <a
+            href={waLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 flex items-center justify-center gap-2 btn px-4 py-2 text-sm bg-[#25D366] text-white border-[#128C7E] hover:bg-[#1ebe5d] transition-colors w-full"
+          >
+            <span className="text-base">📲</span>
+            שלח בוואטסאפ
+          </a>
+        </div>
 
         {/* Business name */}
         <div className="sketch-box p-5">

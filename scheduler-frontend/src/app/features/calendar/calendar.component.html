@@ -17,7 +17,7 @@
   </svg>
 
   <!-- ── Header ─────────────────────────────────────────────────────────── -->
-  <header role="banner" class="shrink-0 flex items-center justify-between px-3 sm:px-4 py-2 bg-ink text-white">
+  <header role="banner" class="shrink-0 md:flex items-center justify-between px-3  sm:px-4 sm:py-4 py-2 bg-ink text-white">
 
     <h1 class="font-sketch text-xl sm:text-2xl font-bold text-amber m-0 leading-tight"
         style="text-shadow:2px 2px 0 rgba(0,0,0,.4)">
@@ -277,6 +277,21 @@
       [message]="langSvc.tr().howToMessage"
       (close)="showInstructions.set(false)"
     />
+  }
+
+  <!-- ── ICS calendar export FAB ─────────────────────────────────────────── -->
+  @if (localClient() && myAppointments().length) {
+    <button
+      class="fixed bottom-5 start-5 z-40 flex items-center gap-2 btn-sketch bg-white text-ink px-3 py-2 text-sm shadow-lg"
+      style="box-shadow: 3px 3px 0 rgb(var(--c-ink) / 0.7)"
+      (click)="downloadIcs()"
+      [attr.aria-label]="'הורד ' + myAppointments().length + ' תורים לקובץ יומן'"
+      title="ייצוא לגוגל קלנדר / Outlook"
+    >
+      <span aria-hidden="true">📥</span>
+      <span class="hidden sm:inline">{{ myAppointments().length }} תורים ← יומן</span>
+      <span class="sm:hidden">יומן</span>
+    </button>
   }
 
 </div>

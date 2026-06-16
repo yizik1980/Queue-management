@@ -228,4 +228,55 @@ export class CalendarComponent implements OnInit {
   closeForm(): void { showFormSignal.set(false); }
 
   statusClass(status: string): string { return `status-badge status-${status}`; }
+
+  readonly myAppointments = computed(() => {
+    const lc = localClientSignal();
+    if (!lc) return [];
+    return appointmentsSignal().filter(a =>
+      a.clientId === lc._id && a.status !== 'cancelled' && a.status !== 'completed'
+    );
+  });
+
+  downloadIcs(): void {
+    const apts = this.myAppointments();
+    if (!apts.length) return;
+
+    const lines = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Scheduler//HE',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH',
+    ];
+
+    for (const a of apts) {
+      lines.push(
+        'BEGIN:VEVENT',
+        `UID:${a._id ?? a.date + a.startTime}@scheduler`,
+        `DTSTART:${this.toIcsDt(a.date, a.startTime)}`,
+        `DTEND:${this.toIcsDt(a.date, a.endTime)}`,
+        `SUMMARY:${this.icsEscape(a.service)}`,
+        ...(a.notes ? [`DESCRIPTION:${this.icsEscape(a.notes)}`] : []),
+        `STATUS:${a.status === 'confirmed' ? 'CONFIRMED' : 'TENTATIVE'}`,
+        'END:VEVENT',
+      );
+    }
+    lines.push('END:VCALENDAR');
+
+    const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+    const url  = URL.createObjectURL(blob);
+    const el   = document.createElement('a');
+    el.href     = url;
+    el.download = 'תורים.ics';
+    el.click();
+    URL.revokeObjectURL(url);
+  }
+
+  private toIcsDt(date: string, time: string): string {
+    return date.replace(/-/g, '') + 'T' + time.replace(':', '') + '00';
+  }
+
+  private icsEscape(s: string): string {
+    return s.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+  }
 }
