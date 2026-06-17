@@ -8,7 +8,7 @@ export default {
         cream:   '#fef9e7',
         accent:  '#e84393',
         violet:  '#6c5ce7',
-        mint:    '#00b894',
+        mint:    'rgb(253 203 110 / 78%)',
         amber:   '#fdcb6e',
         crimson: '#d63031',
         slate:   '#636e72',

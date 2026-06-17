@@ -60,6 +60,10 @@ export interface Translations {
   howToBtn: string;
   howToMessage: string[];
 
+  // Booking confirmation
+  todayWord: string;
+  bookingConfirmed: (service: string, dateLabel: string) => string;
+
   // Client registration
   welcomeTitle: string;
   welcomeSubtitle: string;
@@ -126,6 +130,8 @@ export const HE: Translations = {
   statusCompleted: 'הושלם',
 
   howToBtn: 'הוראות',
+  todayWord: 'היום',
+  bookingConfirmed: (s, d) => `קבעת "${s}" ל${d} — מחכים לראותך!`,
   howToMessage:[
     '📋 איך לקבוע תור?\n\n' ,
     '1️⃣  לחץ על יום בלוח השנה\n' ,
@@ -201,6 +207,8 @@ export const EN: Translations = {
   statusCompleted: 'Completed',
 
   howToBtn: '?',
+  todayWord: 'today',
+  bookingConfirmed: (s, d) => `"${s}" booked for ${d} — see you soon!`,
   howToMessage:[
     '📋 How to book an appointment?\n\n' ,
     '1️⃣  Click on a day in the calendar\n' ,

@@ -10,6 +10,7 @@ import { generateTimeSlots } from '../../core/models/settings.model';
 import { AppointmentsService } from '../../core/services/appointments.service';
 import { HebrewDateService } from '../../core/services/hebrew-date.service';
 import { LanguageService } from '../../core/services/language.service';
+import { ToastService } from '../../core/services/toast.service';
 import {
   clientsSignal, selectedAppointmentSignal, selectedDateSignal,
   localClientSignal, localClientActiveAppointments, settingsSignal,
@@ -35,6 +36,7 @@ export class AppointmentFormComponent implements OnInit, AfterViewInit, OnDestro
 
   private svc        = inject(AppointmentsService);
   private hebrewSvc  = inject(HebrewDateService);
+  private toastSvc   = inject(ToastService);
   private el         = inject(ElementRef<HTMLElement>);
   readonly langSvc   = inject(LanguageService);
 
@@ -203,7 +205,25 @@ export class AppointmentFormComponent implements OnInit, AfterViewInit, OnDestro
     const obs = existing?._id
       ? this.svc.update(existing._id, this.form)
       : this.svc.create(this.form as Omit<Appointment, '_id'>);
-    obs.subscribe({ next: () => { this.saving.set(false); this.close.emit(); } });
+    obs.subscribe({
+      next: () => {
+        this.saving.set(false);
+        if (!existing?._id) this.showBookingToast();
+        this.close.emit();
+      },
+    });
+  }
+
+  private showBookingToast(): void {
+    const t   = this.langSvc.tr();
+    const date = this.form.date ?? '';
+    const dateLabel = date === this.today
+      ? t.todayWord
+      : (() => {
+          const [, m, d] = date.split('-').map(Number);
+          return t.dir === 'rtl' ? `${d} ב${t.months[m - 1]}` : `${t.months[m - 1]} ${d}`;
+        })();
+    this.toastSvc.show(t.bookingConfirmed(this.form.service ?? '', dateLabel), 'success', 6000, '🎉');
   }
 
   statusBtnColor(value: string): string {

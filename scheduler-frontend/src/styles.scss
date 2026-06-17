@@ -161,16 +161,24 @@
     @apply sketch-box flex flex-col overflow-hidden p-1 cursor-pointer;
     min-height: 0;
     transition: transform 0.18s ease-out, box-shadow 0.18s ease-out, z-index 0s;
+    
     &:hover:not(.other-month):not(.is-past) {
       transform: scale(1.55);
       box-shadow: 5px 5px 0 rgb(var(--c-ink) / 0.65);
       z-index: 20;
+      overflow: visible;
+      .day-hand { 
+        opacity: 0.88;
+        pointer-events: auto;
+        animation: hand-click 2s ease-in-out forwards;
+       }
     }
     &:focus-visible {
       outline: 2px solid rgb(var(--c-violet));
       outline-offset: 2px;
       z-index: 20;
     }
+    .day-hand { opacity: 0; pointer-events: none; }
     &.other-month { @apply bg-gray-50 opacity-50 cursor-default; }
     &.is-past {
       @apply opacity-40 cursor-default;
@@ -213,6 +221,14 @@
   40%            { transform: translateY(-6px) scale(1);    opacity: 1;    }
 }
 
+@keyframes hand-click {
+  0%   { transform: rotateZ(45deg) translateY(-6px) scale(0.82); opacity: 0; }
+  22%  { transform:  rotateZ(45deg) translateY(0)    scale(1);    opacity: 0.4; }
+  50%  { transform:  rotateZ(45deg) translateY(7px)  scale(0.82) ; opacity: 0.4; }
+  68%  { transform:  rotateZ(45deg) translateY(7px)  scale(0.92) rotatex(-56deg); opacity: 0.3; }
+  100% { transform: rotateZ(45deg) translateY(0)    scale(0.6)  rotateY(0deg);    opacity: 0; }
+}
+
 // ── Respect user's motion preference (WCAG 2.3.3 AAA) ────────────────────────
 @media (prefers-reduced-motion: reduce) {
   .sketch-box::before { transition: none; }
@@ -224,6 +240,7 @@
   .day-cell {
     transition: none;
     &:hover:not(.other-month):not(.is-past) { transform: none; }
+    .day-hand { animation: none !important; }
   }
   .loader-dots > span { animation: none; opacity: 1; transform: none; }
 }

@@ -187,7 +187,7 @@ export class CalendarComponent implements OnInit {
           this.showPopup.set(true)
         });
         this.langSvc.tr().tips?.map(tip =>
-          this.toastService.show(tip.text, 'success', 100000, tip.icon));
+          this.toastService.show(tip.text, 'success', 10000, tip.icon));
         this.checkLocalClient();
       });
     });
