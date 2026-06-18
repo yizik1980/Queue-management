@@ -298,6 +298,83 @@
       </div>
     </div>
 
+    <!-- ── Sidebar: My Appointments & Notifications ─────────────────────── -->
+    <aside
+      class="hidden md:flex flex-col w-72 shrink-0 border-e border-ink/15 bg-white/50 overflow-y-auto"
+      aria-label="פאנל התורים"
+    >
+      <!-- Header -->
+      <div class="px-4 py-3 bg-ink/5 border-b border-ink/10 shrink-0 flex items-center gap-2">
+        <span aria-hidden="true">📅</span>
+        <h2 class="font-sketch text-sm font-bold text-ink m-0">
+          {{ langSvc.isRTL() ? 'התורים שלי' : 'My Appointments' }}
+        </h2>
+      </div>
+
+      @if (!localClient()) {
+        <div class="flex-1 flex flex-col items-center justify-center gap-3 px-5 text-center">
+          <span class="text-4xl opacity-30" aria-hidden="true">🗓️</span>
+          <p class="text-sm text-gray-400 leading-relaxed">
+            {{ langSvc.isRTL() ? 'הרשם כדי לצפות בתורים שלך' : 'Register to view your appointments' }}
+          </p>
+        </div>
+      } @else {
+        <!-- Appointment cards -->
+        <div class="flex flex-col gap-2.5 p-3 overflow-y-auto flex-1">
+          @if (myAppointments().length === 0) {
+            <div class="flex flex-col items-center justify-center gap-2 py-10 text-center">
+              <span class="text-3xl opacity-30" aria-hidden="true">📭</span>
+              <p class="text-sm text-gray-400">
+                {{ langSvc.isRTL() ? 'אין תורים פעילים' : 'No active appointments' }}
+              </p>
+            </div>
+          }
+          @for (apt of myAppointments(); track apt._id) {
+            <button
+              class="sketch-box w-full text-start p-2.5 flex flex-col gap-1.5
+                     transition-transform duration-150 hover:-translate-y-0.5 cursor-pointer"
+              [style.border-color]="apt.color"
+              [style.background]="apt.color + '15'"
+              (click)="editAppointment(apt, $event)"
+              [attr.aria-label]="apt.service + ' — ' + formatAptDate(apt.date) + ' ' + apt.startTime"
+            >
+              <div class="flex items-start justify-between gap-2">
+                <span class="text-sm font-semibold text-ink leading-tight flex-1 min-w-0 truncate">{{ apt.service }}</span>
+                <span class="status-badge status-{{ apt.status }} shrink-0">{{ statusLabel(apt.status) }}</span>
+              </div>
+              <div class="flex items-center gap-3 text-xs text-gray-500">
+                <span aria-hidden="true">📅 {{ formatAptDate(apt.date) }}</span>
+                <span aria-hidden="true">⏰ {{ apt.startTime }}</span>
+              </div>
+              @if (apt.status === 'pending') {
+                <p class="text-[0.62rem] text-amber/90 italic leading-tight mt-0.5" aria-hidden="true">
+                  {{ langSvc.isRTL() ? '⏳ ממתין לאישור' : '⏳ Awaiting confirmation' }}
+                </p>
+              } @else if (apt.status === 'confirmed') {
+                <p class="text-[0.62rem] text-mint font-semibold leading-tight mt-0.5" aria-hidden="true">
+                  {{ langSvc.isRTL() ? '✅ מאושר' : '✅ Confirmed' }}
+                </p>
+              }
+            </button>
+          }
+        </div>
+
+        <!-- Admin notification -->
+        @if (settings()?.popupMessage?.trim()) {
+          <div class="shrink-0 p-3 border-t border-ink/10">
+            <div class="sketch-box p-3"
+                 style="border-color: rgb(var(--c-amber) / 0.6); background: rgb(var(--c-amber) / 0.08)">
+              <p class="text-xs font-bold text-ink/80 mb-1.5 flex items-center gap-1">
+                <span aria-hidden="true">🔔</span>
+                {{ langSvc.isRTL() ? 'הודעה מהעסק' : 'Message from us' }}
+              </p>
+              <p class="text-xs text-ink/70 leading-relaxed">{{ settings()!.popupMessage }}</p>
+            </div>
+          </div>
+        }
+      }
+    </aside>
+
     <!-- ── Desktop: Calendar grid ───────────────────────────────────────── -->
     <div class="hidden md:flex flex-1 min-h-0 flex-col p-4 gap-[3px]">
       <!-- Weekday headers -->

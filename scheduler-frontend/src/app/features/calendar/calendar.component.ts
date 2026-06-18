@@ -269,6 +269,22 @@ export class CalendarComponent implements OnInit {
 
   statusClass(status: string): string { return `status-badge status-${status}`; }
 
+  statusLabel(status: string): string {
+    const t = this.langSvc.tr();
+    const map: Record<string, string> = {
+      pending: t.statusPending, confirmed: t.statusConfirmed,
+      cancelled: t.statusCancelled, completed: t.statusCompleted,
+    };
+    return map[status] ?? status;
+  }
+
+  formatAptDate(dateStr: string): string {
+    const t = this.langSvc.tr();
+    if (dateStr === this.todayStr()) return t.todayWord;
+    const [, m, d] = dateStr.split('-').map(Number);
+    return t.dir === 'rtl' ? `${d} ב${t.months[m - 1]}` : `${t.months[m - 1]} ${d}`;
+  }
+
   readonly myAppointments = computed(() => {
     const lc = localClientSignal();
     if (!lc) return [];
