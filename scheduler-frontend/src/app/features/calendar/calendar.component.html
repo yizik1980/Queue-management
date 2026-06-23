@@ -322,11 +322,37 @@
         <!-- Appointment cards -->
         <div class="flex flex-col gap-2.5 p-3 overflow-y-auto flex-1">
           @if (myAppointments().length === 0) {
-            <div class="flex flex-col items-center justify-center gap-2 py-10 text-center">
-              <span class="text-3xl opacity-30" aria-hidden="true">📭</span>
-              <p class="text-sm text-gray-400">
-                {{ langSvc.isRTL() ? 'אין תורים פעילים' : 'No active appointments' }}
-              </p>
+            <div class="flex flex-col gap-3 py-4 px-1">
+              <div class="flex flex-col items-center gap-1.5 text-center">
+                <span class="text-3xl" aria-hidden="true">📋</span>
+                <p class="text-sm font-semibold text-ink/70">
+                  {{ langSvc.isRTL() ? 'איך לקבוע תור?' : 'How to book?' }}
+                </p>
+              </div>
+              <ol class="flex flex-col gap-2 text-xs text-ink/60 leading-snug list-none p-0 m-0">
+                <li class="flex items-start gap-2">
+                  <span class="shrink-0 font-bold text-violet" aria-hidden="true">1️⃣</span>
+                  <span>{{ langSvc.isRTL() ? 'לחץ על יום בלוח השנה' : 'Click a day on the calendar' }}</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="shrink-0 font-bold text-violet" aria-hidden="true">2️⃣</span>
+                  <span>{{ langSvc.isRTL() ? 'בחר שעה פנויה' : 'Pick an available time slot' }}</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="shrink-0 font-bold text-violet" aria-hidden="true">3️⃣</span>
+                  <span>{{ langSvc.isRTL() ? 'מלא את סוג השירות' : 'Fill in the service type' }}</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="shrink-0 font-bold text-violet" aria-hidden="true">4️⃣</span>
+                  <span>{{ langSvc.isRTL() ? 'לחץ ✅ שמור' : 'Click ✅ Save' }}</span>
+                </li>
+              </ol>
+              <button
+                class="btn-sketch w-full bg-mint text-ink py-1.5 text-xs mt-1"
+                (click)="openNewAppointment()"
+              >
+                {{ langSvc.tr().newAppointmentBtn }}
+              </button>
             </div>
           }
           @for (apt of myAppointments(); track apt._id) {
