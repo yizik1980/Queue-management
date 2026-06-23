@@ -385,6 +385,11 @@
           }
         </div>
 
+        <!-- Clock -->
+        <div class="shrink-0 border-t border-ink/10">
+          <app-clock />
+        </div>
+
         <!-- Admin notification -->
         @if (settings()?.popupMessage?.trim()) {
           <div class="shrink-0 p-3 border-t border-ink/10">
@@ -398,6 +403,11 @@
             </div>
           </div>
         }
+
+        <!-- Mascot -->
+        <div class="shrink-0 flex justify-end items-end px-2 pb-1 pointer-events-none" aria-hidden="true">
+          <img src="/ch_nobg.png" alt="" class="w-36 drop-shadow-md" />
+        </div>
       }
     </aside>
 

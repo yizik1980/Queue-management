@@ -24,6 +24,7 @@ import { ToastComponent } from "../toast/toast.component";
 import { ToastService } from "../../core/services/toast.service";
 import { LoaderComponent } from "../loader/loader.component";
 import { MiniCalendarComponent, MiniCalendarDay } from "../mini-calendar/mini-calendar.component";
+import { ClockComponent } from "../clock/clock.component";
 
 interface TodaySlot {
   time: string;
@@ -34,7 +35,7 @@ interface TodaySlot {
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [CommonModule, RouterModule, AppointmentFormComponent, ClientRegistrationComponent, NotFoundComponent, PopupMessageComponent, ToastComponent, LoaderComponent, MiniCalendarComponent],
+  imports: [CommonModule, RouterModule, AppointmentFormComponent, ClientRegistrationComponent, NotFoundComponent, PopupMessageComponent, ToastComponent, LoaderComponent, MiniCalendarComponent, ClockComponent],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.scss',
 })
