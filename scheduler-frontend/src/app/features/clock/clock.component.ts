@@ -6,7 +6,7 @@ type ClockMode = 'digital' | 'analog';
   selector: 'app-clock',
   standalone: true,
   template: `
-    <div class="flex flex-col items-center gap-2 py-3 px-4">
+    <div class="flex flex-col items-center gap-2 py-3 px-3">
 
       <!-- Toggle -->
       <div class="flex rounded-full overflow-hidden border border-ink/20 text-[0.65rem] font-bold">
@@ -40,7 +40,7 @@ type ClockMode = 'digital' | 'analog';
       @if (mode() === 'analog') {
         <svg
           viewBox="0 0 100 100"
-          class="w-28 h-28"
+          class="w-full max-w-[13rem]"
           role="img"
           [attr.aria-label]="'שעון אנלוגי, ' + digitalTime()"
         >
@@ -115,7 +115,7 @@ type ClockMode = 'digital' | 'analog';
   `,
 })
 export class ClockComponent implements OnInit, OnDestroy {
-  mode = signal<ClockMode>('digital');
+  mode = signal<ClockMode>('analog');
   private now = signal<Date>(new Date());
   private intervalId: ReturnType<typeof setInterval> | null = null;
 
