@@ -32,10 +32,10 @@ import { CommonModule } from '@angular/common';
 })
 export class SplashComponent implements OnInit {
   visible = signal(true);
-  fading  = signal(false);
+  fading = signal(false);
 
   ngOnInit(): void {
     setTimeout(() => this.fading.set(true), 2200);
-    setTimeout(() => this.visible.set(false), 2900);
+    setTimeout(() => this.visible.set(false), 5000);
   }
 }
