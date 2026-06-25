@@ -34,3 +34,114 @@
   --sketch-deco:        0;
   --sketch-deco-offset: 0px;
 }
+
+// ── Green theme — calendar overrides ─────────────────────────────────────────
+:root[data-theme="green"] {
+
+  // Calendar grid background
+  .cal-grid-wrap {
+    background: #f0fdf4;
+    border-radius: 1rem;
+    padding: 0.5rem;
+  }
+
+  // Weekday header row
+  .cal-weekday-header {
+    background: transparent !important;
+    color: #6b7280 !important;
+    font-weight: 600;
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid #e5e7eb;
+    border-radius: 0 !important;
+  }
+
+  // Individual day cells
+  .day-cell {
+    background: white;
+    border-color: rgb(17 94 89 / 0.07) !important;
+    box-shadow: none !important;
+    border-radius: 0.625rem !important;
+
+    &:hover:not(.other-month):not(.is-past) {
+      transform: none;
+      background: rgb(34 197 94 / 0.09);
+      border-color: rgb(34 197 94 / 0.35) !important;
+      z-index: 1;
+      overflow: hidden;
+      .day-hand { display: none; }
+    }
+
+    &.is-today {
+      background: rgb(34 197 94 / 0.1) !important;
+      border-color: rgb(34 197 94 / 0.5) !important;
+      border-width: 1.5px !important;
+    }
+
+    &.is-selected {
+      background: rgb(34 197 94 / 0.15) !important;
+      border-color: rgb(22 163 74) !important;
+      border-width: 2px !important;
+    }
+
+    &.other-month {
+      background: transparent !important;
+      border-color: transparent !important;
+      box-shadow: none !important;
+    }
+
+    &.is-past:not(.other-month) {
+      background: rgb(249 250 251) !important;
+    }
+  }
+
+  // Today's day number — solid green rounded square
+  .day-cell.is-today .gregorian-day-num {
+    background: #16a34a !important;
+    color: white !important;
+    border-radius: 0.35rem !important;
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  // All day numbers — rounded square not full circle
+  .gregorian-day-num {
+    border-radius: 0.35rem !important;
+  }
+
+  // Appointment chips — softer look
+  .apt-chip {
+    border-radius: 0.5rem !important;
+    border-width: 1px !important;
+  }
+
+  // CTA buttons full-width pill
+  .btn-sketch {
+    border-radius: 2rem !important;
+    border-color: transparent !important;
+    box-shadow: 0 2px 8px rgb(22 163 74 / 0.25) !important;
+  }
+
+  // Sidebar cards
+  .sketch-box {
+    box-shadow: 0 1px 4px rgb(17 94 89 / 0.08) !important;
+    border-color: rgb(17 94 89 / 0.12) !important;
+  }
+
+  // Month nav bar
+  nav[aria-label="ניווט חודש"] {
+    background: white !important;
+    border-bottom: 1px solid rgb(17 94 89 / 0.1) !important;
+
+    button {
+      background: #f0fdf4 !important;
+      border: 1px solid rgb(34 197 94 / 0.3) !important;
+      color: #16a34a !important;
+      font-size: 1.1rem;
+    }
+
+    .font-sketch {
+      color: #14532d !important;
+    }
+  }
+}

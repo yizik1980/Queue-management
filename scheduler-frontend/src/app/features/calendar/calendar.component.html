@@ -412,12 +412,12 @@
     </aside>
 
     <!-- ── Desktop: Calendar grid ───────────────────────────────────────── -->
-    <div class="hidden md:flex flex-1 min-h-0 flex-col p-4 gap-[3px]">
+    <div class="hidden md:flex flex-1 min-h-0 flex-col p-4 gap-1 cal-grid-wrap">
       <!-- Weekday headers -->
-      <div class="shrink-0 grid grid-cols-7 gap-[3px]" role="row">
+      <div class="shrink-0 grid grid-cols-7 gap-1" role="row">
         @for (day of weekDays(); track day) {
           <div
-            class="text-center font-sketch text-xs font-bold py-1 bg-ink text-amber rounded-sm"
+            class="cal-weekday-header text-center font-sketch text-xs font-bold py-1 bg-ink text-amber rounded-sm"
             role="columnheader"
           >
             {{ day }}
@@ -429,7 +429,7 @@
       <div
         role="grid"
         [attr.aria-label]="monthTitle()"
-        class="flex-1 min-h-0 grid grid-cols-7 gap-[3px]"
+        class="flex-1 min-h-0 grid grid-cols-7 gap-1"
         [style.grid-template-rows]="gridRows()"
       >
         @for (day of calendarDays(); track day.dateStr) {
