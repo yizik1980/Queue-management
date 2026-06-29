@@ -14,7 +14,7 @@
   class="fixed inset-0 flex items-center justify-center z-[1001] p-4 pointer-events-none"
 >
   <div
-    class="sketch-box w-full max-w-[520px] max-h-[90vh] overflow-y-auto rounded-lg !bg-cream pointer-events-auto"
+    class="sketch-box w-full max-w-[520px] max-h-[90vh] overflow-y-auto rounded-lg !bg-cream pointer-events-auto scrollbar-hide"
     (click)="$event.stopPropagation()"
   >
     <!-- Header -->
@@ -178,25 +178,6 @@
           </div>
         </div>
       }
-
-      <!-- Color swatches -->
-      <div>
-        <label class="form-label" id="apt-color-label">{{ langSvc.tr().colorLabel }}</label>
-        <div class="flex flex-wrap gap-2" role="group" aria-labelledby="apt-color-label">
-          @for (c of colors; track c) {
-            <button
-              type="button"
-              class="w-7 h-7 rounded-full cursor-pointer border-2 border-transparent shadow-sketch-sm transition-transform hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2"
-              [style.background]="c"
-              [class.!border-ink]="form.color === c"
-              [class.scale-125]="form.color === c"
-              [attr.aria-pressed]="form.color === c"
-              [attr.aria-label]="'צבע ' + c + (form.color === c ? ' – נבחר' : '')"
-              (click)="form.color = c"
-            ></button>
-          }
-        </div>
-      </div>
 
       <!-- Notes -->
       <div>

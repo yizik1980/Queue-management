@@ -137,7 +137,7 @@ function ClientCard({ client, activeCount, deleting, onDelete }: {
       {/* Actions */}
       <div className="flex gap-2 pt-2 border-t border-gray-100">
         <button
-          className="btn text-xs px-3 py-1.5 bg-crimson/10 text-crimson border-crimson/30 ms-auto"
+          className="btn text-xs px-3 py-1.5 bg-crimson/10 text-crimson border-crimson/30 w-full"
           onClick={onDelete}
           disabled={deleting}
         >

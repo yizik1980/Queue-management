@@ -17,11 +17,6 @@ import {
   appointmentsSignal,
 } from '../../core/store/app.store';
 
-const APPOINTMENT_COLORS = [
-  '#e84393', '#6c5ce7', '#00b894', '#fdcb6e', '#0984e3',
-  '#e17055', '#a29bfe', '#55efc4', '#fab1a0', '#74b9ff',
-];
-
 const FOCUSABLE = 'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea, [tabindex="0"]';
 
 @Component({
@@ -45,7 +40,6 @@ export class AppointmentFormComponent implements OnInit, AfterViewInit, OnDestro
   readonly clients     = clientsSignal;
   readonly localClient = localClientSignal;
   readonly editing     = computed(() => !!selectedAppointmentSignal());
-  readonly colors      = APPOINTMENT_COLORS;
 
   readonly today = (() => {
     const d = new Date();
@@ -106,7 +100,7 @@ export class AppointmentFormComponent implements OnInit, AfterViewInit, OnDestro
     clientId: '', clientName: '', date: '',
     startTime: '', endTime: '',
     service: '', notes: '', status: 'pending',
-    color: APPOINTMENT_COLORS[0],
+    color: '',
   };
 
   hebrewDateLabel = signal('');

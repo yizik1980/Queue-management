@@ -175,17 +175,18 @@ export default function AppointmentsPage() {
                       <StatusPill status={apt.status} />
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex flex-wrap gap-1">
+                      <div className="flex gap-1">
                         {(STATUS_NEXT[apt.status] ?? []).map(({ action, label, color }) => (
                           <button
                             key={action}
-                            className={`btn text-xs px-2 py-1 border ${color}`}
+                            className={`btn text-xs px-2 py-1 border flex-1 ${color}`}
                             onClick={() => changeStatus(apt, action)}
                             disabled={updating === apt._id}
                           >
                             {label}
                           </button>
                         ))}
+                        {/* The delete button is always available */}
                         <button
                           className="btn text-xs px-2 py-1 bg-crimson/10 text-crimson border-crimson/30"
                           onClick={() => deleteApt(apt._id)}

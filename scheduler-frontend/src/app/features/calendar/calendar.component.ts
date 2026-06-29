@@ -14,6 +14,7 @@ import {
   currentMonthAppointments, navigateMonth, showFormSignal,
   selectedAppointmentSignal, loadingSignal, localClientSignal,
   settingsSignal, appointmentsSignal, setAdminId,
+  localClientActiveAppointments,
 } from '../../core/store/app.store';
 import { AppointmentFormComponent } from '../appointment-form/appointment-form.component';
 import { ClientRegistrationComponent } from '../client-registration/client-registration.component';
@@ -286,13 +287,7 @@ export class CalendarComponent implements OnInit {
     return t.dir === 'rtl' ? `${d} ב${t.months[m - 1]}` : `${t.months[m - 1]} ${d}`;
   }
 
-  readonly myAppointments = computed(() => {
-    const lc = localClientSignal();
-    if (!lc) return [];
-    return appointmentsSignal().filter(a =>
-      a.clientId === lc._id && a.status !== 'cancelled' && a.status !== 'completed'
-    );
-  });
+  readonly myAppointments = localClientActiveAppointments;
 
   downloadIcs(): void {
     const apts = this.myAppointments();

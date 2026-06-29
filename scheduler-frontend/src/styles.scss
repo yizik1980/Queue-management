@@ -229,6 +229,13 @@
   100% { transform: rotateZ(45deg) translateY(0)    scale(0.6)  rotateY(0deg);    opacity: 0; }
 }
 
+// ── Scrollbar utilities ───────────────────────────────────────────────────────
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
 // ── Respect user's motion preference (WCAG 2.3.3 AAA) ────────────────────────
 @media (prefers-reduced-motion: reduce) {
   .sketch-box::before { transition: none; }

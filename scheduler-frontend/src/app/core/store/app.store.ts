@@ -51,13 +51,19 @@ export const selectedDayAppointments = computed(() => {
   return appointmentsSignal().filter(a => a.date === date);
 });
 
-// Active (pending/confirmed) appointments for the locally-registered client
+// Active (pending/confirmed) future appointments for the locally-registered client
 export const localClientActiveAppointments = computed(() => {
   const client = localClientSignal();
   if (!client?._id) return [];
-  return appointmentsSignal().filter(
-    a => a.clientId === client._id && a.status !== 'cancelled' && a.status !== 'completed'
-  );
+  const now = new Date();
+  return appointmentsSignal().filter(a => {
+    if (a.clientId !== client._id) return false;
+    if (a.status === 'cancelled' || a.status === 'completed') return false;
+    const [h, m] = a.startTime.split(':').map(Number);
+    const aptTime = new Date(a.date);
+    aptTime.setHours(h, m, 0, 0);
+    return aptTime > now;
+  });
 });
 
 // ── Actions ────────────────────────────────────────────────────────────────
